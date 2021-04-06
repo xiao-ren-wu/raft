@@ -14,4 +14,10 @@ public abstract class Assert {
             throw e.get();
         }
     }
+
+    public static <E extends RuntimeException> void isFalse(Boolean expression, Supplier<E> e) {
+        if (expression) {
+            throw e.get();
+        }
+    }
 }
