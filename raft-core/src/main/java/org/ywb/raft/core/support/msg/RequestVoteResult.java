@@ -6,6 +6,7 @@ package org.ywb.raft.core.support.msg;
  * @since 1.0.0
  */
 public class RequestVoteResult {
+
     /**
      * 选举term
      */
