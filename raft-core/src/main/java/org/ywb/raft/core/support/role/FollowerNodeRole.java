@@ -22,12 +22,23 @@ public class FollowerNodeRole extends AbstractNodeRole {
 
     private final ElectionTimeoutTask electionTimeout;
 
-    public FollowerNodeRole(RoleName name, int term, NodeId votedFor, NodeId leaderId, ElectionTimeoutTask electionTimeout) {
-        super(name, term);
+    public FollowerNodeRole(int term, NodeId votedFor, NodeId leaderId, ElectionTimeoutTask electionTimeout) {
+        super(RoleName.FOLLOWER, term);
         this.votedFor = votedFor;
         this.leaderId = leaderId;
         this.electionTimeout = electionTimeout;
     }
+
+    /**
+     * 获取node节点中的leaderId
+     *
+     * @param nodeId nodeId
+     * @return leader Node id
+     */
+    public NodeId getLeaderId(NodeId nodeId) {
+        return leaderId;
+    }
+
 
     @Override
     public void cancelTimeoutOrTask() {

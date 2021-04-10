@@ -2,9 +2,9 @@ package org.ywb.raft.core.support;
 
 import com.google.common.eventbus.EventBus;
 import lombok.Data;
-import org.springframework.core.task.TaskExecutor;
 import org.ywb.raft.core.rpc.Connector;
 import org.ywb.raft.core.schedule.Scheduler;
+import org.ywb.raft.core.support.meta.GroupMember;
 import org.ywb.raft.core.support.meta.NodeGroup;
 import org.ywb.raft.core.support.meta.NodeId;
 
@@ -54,4 +54,8 @@ public class NodeContext {
      * 部分角色状态数据存储
      */
     private NodeStore nodeStore;
+
+    public GroupMember findMember(NodeId nodeId) {
+        return nodeGroup.findGroupMember(nodeId);
+    }
 }

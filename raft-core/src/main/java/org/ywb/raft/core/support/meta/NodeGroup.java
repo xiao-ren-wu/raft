@@ -18,15 +18,15 @@ public class NodeGroup {
     /**
      * 当前节点的nodeId
      */
-    private final NodeId nodeId;
+    private final NodeId selfNodeId;
 
     /**
      * 群组成员列表
      */
     private final Map<NodeId, GroupMember> memberMap;
 
-    public NodeGroup(NodeId nodeId, Collection<NodeEndpoint> endpoints) {
-        this.nodeId = nodeId;
+    public NodeGroup(NodeId selfNodeId, Collection<NodeEndpoint> endpoints) {
+        this.selfNodeId = selfNodeId;
         this.memberMap = buildMemberMap(endpoints);
     }
 
@@ -44,14 +44,31 @@ public class NodeGroup {
     }
 
     /**
-     * 获取出自己之外的群组中的成员列表
+     * 获取除自己之外的群组中的成员列表
      *
      * @return list of other node in this group
      */
     public Collection<GroupMember> listReplicationTarget() {
         return memberMap.values()
                 .stream()
-                .filter(a -> !a.getEndpoint().getNodeId().equals(this.nodeId))
+                .filter(a -> !a.getEndpoint().getNodeId().equals(this.selfNodeId))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 获取除自己之外集群列表成员的endpoint
+     *
+     * @return list of other node endpoint in this group
+     */
+    public Collection<NodeEndpoint> listEndpointExceptSelf() {
+        return memberMap.values()
+                .stream()
+                .map(GroupMember::getEndpoint)
+                .filter(nodeEndpoint -> !nodeEndpoint.getNodeId().equals(this.selfNodeId))
+                .collect(Collectors.toList());
+    }
+
+    public int getCount(){
+        return memberMap.size();
     }
 }

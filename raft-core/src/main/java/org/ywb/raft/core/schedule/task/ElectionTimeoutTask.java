@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ElectionTimeoutTask {
 
+    public static final ElectionTimeoutTask NONE = null;
+
     private final ScheduledFuture<?> scheduledFuture;
 
     public ElectionTimeoutTask(ScheduledFuture<?> scheduledFuture) {

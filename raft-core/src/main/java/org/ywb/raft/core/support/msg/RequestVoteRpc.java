@@ -1,6 +1,10 @@
 package org.ywb.raft.core.support.msg;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.ywb.raft.core.support.meta.NodeId;
 
 /**
@@ -10,6 +14,9 @@ import org.ywb.raft.core.support.meta.NodeId;
  * 请求投票消息
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class RequestVoteRpc {
 
     /**

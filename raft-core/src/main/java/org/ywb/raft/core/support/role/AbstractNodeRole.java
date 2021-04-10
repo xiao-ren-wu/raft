@@ -2,6 +2,7 @@ package org.ywb.raft.core.support.role;
 
 import lombok.Getter;
 import org.ywb.raft.core.enums.RoleName;
+import org.ywb.raft.core.support.meta.NodeId;
 
 /**
  * @author yuwenbo1
@@ -24,4 +25,5 @@ public abstract class AbstractNodeRole {
      * 取消超时或者定时任务
      */
     public abstract void cancelTimeoutOrTask();
+
 }
