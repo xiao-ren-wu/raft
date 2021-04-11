@@ -1,4 +1,4 @@
-package org.ywb.raft.core.support.msg;
+package org.ywb.raft.core.rpc.msg;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

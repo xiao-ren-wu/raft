@@ -1,10 +1,10 @@
 package org.ywb.raft.core.rpc;
 
 import org.ywb.raft.core.support.meta.NodeEndpoint;
-import org.ywb.raft.core.support.msg.AppendEntriesResult;
-import org.ywb.raft.core.support.msg.AppendEntriesRpc;
-import org.ywb.raft.core.support.msg.RequestVoteResult;
-import org.ywb.raft.core.support.msg.RequestVoteRpc;
+import org.ywb.raft.core.rpc.msg.AppendEntriesResult;
+import org.ywb.raft.core.rpc.msg.AppendEntriesRpc;
+import org.ywb.raft.core.rpc.msg.RequestVoteResult;
+import org.ywb.raft.core.rpc.msg.RequestVoteRpc;
 
 import java.util.Collection;
 

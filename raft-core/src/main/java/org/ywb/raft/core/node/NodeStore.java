@@ -1,4 +1,4 @@
-package org.ywb.raft.core.support;
+package org.ywb.raft.core.node;
 
 import org.ywb.raft.core.support.meta.NodeId;
 

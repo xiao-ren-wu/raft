@@ -34,7 +34,7 @@ public class NodeGroup {
         Map<NodeId, GroupMember> groupMemberMap =
                 endpoints.stream()
                         .collect(Collectors.toMap(NodeEndpoint::getNodeId, GroupMember::new));
-        Assert.isTrue(groupMemberMap.isEmpty(), () -> new IllegalArgumentException("endpoint must not be empty."));
+        Assert.isFalse(groupMemberMap.isEmpty(), () -> new IllegalArgumentException("endpoint must not be empty."));
         return groupMemberMap;
     }
 

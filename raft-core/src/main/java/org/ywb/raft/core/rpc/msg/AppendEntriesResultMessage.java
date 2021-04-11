@@ -1,6 +1,8 @@
-package org.ywb.raft.core.support.msg;
+package org.ywb.raft.core.rpc.msg;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.ywb.raft.core.support.meta.NodeId;
 
 /**
@@ -9,6 +11,8 @@ import org.ywb.raft.core.support.meta.NodeId;
  * @since 1.0.0
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AppendEntriesResultMessage {
 
     private AppendEntriesResult appendEntriesResult;

@@ -1,10 +1,9 @@
-package org.ywb.raft.core.support.msg;
+package org.ywb.raft.core.rpc.msg;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 import org.ywb.raft.core.support.meta.NodeId;
 
 /**

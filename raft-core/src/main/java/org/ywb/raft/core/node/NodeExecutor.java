@@ -1,11 +1,11 @@
-package org.ywb.raft.core;
+package org.ywb.raft.core.node;
 
 /**
  * @author yuwenbo1
- * @date 2021/4/8 8:22 上午 星期四
+ * @date 2021/4/11 9:49 下午 星期日
  * @since 1.0.0
  */
-public interface Node {
+public interface NodeExecutor {
 
     /**
      * 启动

@@ -2,6 +2,7 @@ package org.ywb.raft.core.support;
 
 import com.google.common.eventbus.EventBus;
 import lombok.Data;
+import org.ywb.raft.core.node.NodeStore;
 import org.ywb.raft.core.rpc.Connector;
 import org.ywb.raft.core.schedule.Scheduler;
 import org.ywb.raft.core.support.meta.GroupMember;

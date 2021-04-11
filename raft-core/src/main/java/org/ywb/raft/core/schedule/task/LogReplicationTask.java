@@ -1,5 +1,7 @@
 package org.ywb.raft.core.schedule.task;
 
+import org.ywb.raft.core.schedule.NullScheduleFuture;
+
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -12,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 public class LogReplicationTask {
 
     private final ScheduledFuture<?> scheduledFuture;
+
+    public static final LogReplicationTask NONE = new LogReplicationTask(new NullScheduleFuture());
 
     public LogReplicationTask(ScheduledFuture<?> scheduledFuture) {
         this.scheduledFuture = scheduledFuture;

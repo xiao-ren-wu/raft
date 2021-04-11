@@ -1,8 +1,9 @@
-package org.ywb.raft.core.support;
+package org.ywb.raft.core.node;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ywb.raft.core.node.NodeStore;
 import org.ywb.raft.core.support.meta.NodeId;
 
 /**

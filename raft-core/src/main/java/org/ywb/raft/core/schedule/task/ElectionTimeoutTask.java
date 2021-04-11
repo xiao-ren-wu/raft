@@ -1,5 +1,7 @@
 package org.ywb.raft.core.schedule.task;
 
+import org.ywb.raft.core.schedule.NullScheduleFuture;
+
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -11,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ElectionTimeoutTask {
 
-    public static final ElectionTimeoutTask NONE = null;
+    public static final ElectionTimeoutTask NONE = new ElectionTimeoutTask(new NullScheduleFuture());
 
     private final ScheduledFuture<?> scheduledFuture;
 
