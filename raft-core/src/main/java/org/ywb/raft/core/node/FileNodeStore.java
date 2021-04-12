@@ -2,12 +2,14 @@ package org.ywb.raft.core.node;
 
 import org.ywb.raft.core.exceptions.NodeStoreException;
 import org.ywb.raft.core.support.meta.NodeId;
+import org.ywb.raft.core.utils.Files;
 import org.ywb.raft.core.utils.RandomAccessFileAdapter;
 import org.ywb.raft.core.utils.SeekableFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * @author yuwenbo1
@@ -36,12 +38,10 @@ public class FileNodeStore implements NodeStore {
     private NodeId votedFor;
 
     public FileNodeStore() {
-        String path = FileNodeStore.class.getClassLoader().getResource("").getPath();
+        String path = Objects.requireNonNull(FileNodeStore.class.getClassLoader().getResource("")).getPath();
         File file = new File(String.join("/", path, FILE_NAME));
         try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            Files.createFileIfNotExist(file);
             this.seekableFile = new RandomAccessFileAdapter(file);
             initializeOrLoad();
         } catch (IOException e) {
@@ -51,9 +51,7 @@ public class FileNodeStore implements NodeStore {
 
     public FileNodeStore(File file) {
         try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            Files.createFileIfNotExist(file);
             this.seekableFile = new RandomAccessFileAdapter(file);
             initializeOrLoad();
         } catch (IOException e) {

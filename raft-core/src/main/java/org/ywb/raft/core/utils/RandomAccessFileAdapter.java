@@ -12,7 +12,7 @@ import java.io.RandomAccessFile;
  */
 public class RandomAccessFileAdapter implements SeekableFile {
 
-    private RandomAccessFile randomAccessFile;
+    private final RandomAccessFile randomAccessFile;
 
     public RandomAccessFileAdapter(File file) throws FileNotFoundException {
         this.randomAccessFile = new RandomAccessFile(file, "rws");

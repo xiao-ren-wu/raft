@@ -48,7 +48,7 @@ public class NodeImpl implements Node {
         context.getConnector().initialize();
         // 启动时为follower
         NodeStore store = context.getNodeStore();
-        changeToRole(new FollowerNodeRole(store.getTerm(), store.getVotedFor(), null, scheduleTimeout()));
+        changeToRole(new FollowerNodeRole(store.getTerm(), store.getVotedFor(), null, scheduleElectionTimeout()));
         started = true;
     }
 
@@ -75,7 +75,6 @@ public class NodeImpl implements Node {
         return this.role;
     }
 
-
     @Override
     public void changeToRole(AbstractNodeRole nodeRole) {
         log.debug("node {},role state changed -> {}", context.getSelfId(), nodeRole);
@@ -89,19 +88,9 @@ public class NodeImpl implements Node {
 
     @Override
     public ElectionTimeoutTask scheduleElectionTimeout() {
-        return context.getScheduler().scheduleElectionTimeoutTask(this::scheduleTimeout);
-    }
-
-    private ElectionTimeoutTask scheduleTimeout() {
-        return context.getScheduler().scheduleElectionTimeoutTask(this::electionTimeout);
-    }
-
-    /**
-     * 1. 选举超时需要变更节点角色
-     * 2. 发送RequestVote消息给其他节点
-     */
-    public void electionTimeout() {
-        context.getTaskExecutor().submit(this::doProcessElectionTimeout);
+        return context.getScheduler().scheduleElectionTimeoutTask(
+                ()-> context.getTaskExecutor().submit(this::doProcessElectionTimeout)
+        );
     }
 
     private void doProcessElectionTimeout() {

@@ -24,7 +24,7 @@ import static org.ywb.raft.core.enums.RoleName.*;
  * @since 1.0.0
  */
 @Slf4j
-public class OnReceiveSubScribeImpl implements OnReceiveSubscribe{
+public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
 
     private final Node node;
 
@@ -43,8 +43,7 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe{
         context.getTaskExecutor().submit(() -> context.getConnector().replyRequestVote(
                 doProcessRequestVoteRpc(requestVoteRpcMessage),
                 // 发送消息的节点
-                context.findMember(requestVoteRpcMessage.getSourceNodeId()).getEndpoint()
-                )
+                context.findMember(requestVoteRpcMessage.getSourceNodeId()).getEndpoint())
         );
     }
 
@@ -162,15 +161,17 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe{
     }
 
     private LogReplicationTask scheduleLogReplicationTask() {
-        return context.getScheduler().scheduleLogReplicationTask(this::replicateLog);
+        return context.getScheduler()
+                .scheduleLogReplicationTask(() -> context.getTaskExecutor().submit(this::doReplicateLog));
     }
 
-    /**
-     * 日志复制入口
-     */
-    private void replicateLog() {
-        context.getTaskExecutor().submit(this::doReplicateLog);
-    }
+///    /**
+//     * 测试使用
+//     * 日志复制入口
+//     */
+///    private void replicateLog() {
+//        context.getTaskExecutor().submit(this::doReplicateLog);
+//    }
 
     private void doReplicateLog() {
         log.debug("replicate log");

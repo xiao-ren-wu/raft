@@ -56,7 +56,7 @@ public class NodeImplTest {
 
         node.start();
         // 直接执行选举任务
-        node.electionTimeout();
+        node.scheduleElectionTimeout();
         CandidateNodeRole candidateNodeRole = (CandidateNodeRole) node.getRole();
 
         Assertions.assertEquals(1, candidateNodeRole.getTerm());
@@ -111,7 +111,7 @@ public class NodeImplTest {
         OnReceiveSubscribe onReceiveSubScribe = new OnReceiveSubScribeImpl(node);
 
         node.start();
-        node.electionTimeout();
+        node.scheduleElectionTimeout();
         onReceiveSubScribe.onReceiveRequestVoteResult(new RequestVoteResult(1, true));
         LeaderNodeRole role = (LeaderNodeRole) node.getRole();
         Assertions.assertEquals(1, role.getTerm());
@@ -127,7 +127,7 @@ public class NodeImplTest {
         OnReceiveSubScribeImpl onReceiveSubScribe = new OnReceiveSubScribeImpl(node);
 
         node.start();
-        node.electionTimeout();
+        node.scheduleElectionTimeout();
         onReceiveSubScribe.onReceiveRequestVoteResult(new RequestVoteResult(1, true));
         // todo 测试时需要将该方法的访问权限置换成public
 //        onReceiveSubScribe.replicateLog();
@@ -184,7 +184,7 @@ public class NodeImplTest {
         OnReceiveSubScribeImpl onReceiveSubScribe = new OnReceiveSubScribeImpl(node);
 
         node.start();
-        node.electionTimeout();
+        node.scheduleElectionTimeout();
         onReceiveSubScribe.onReceiveRequestVoteResult(new RequestVoteResult(1, true));
         onReceiveSubScribe.onReceiveAppendEntriesResult(new AppendEntriesResultMessage(
                 new AppendEntriesResult(1, true),

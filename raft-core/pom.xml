@@ -11,6 +11,7 @@
 
     <artifactId>raft-core</artifactId>
     <version>${raft.version}</version>
+
     <name>raft-core</name>
 
     <properties>
