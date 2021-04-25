@@ -96,6 +96,13 @@ public interface EntrySequence {
     void append(List<Entry> entries);
 
     /**
+     * 追加日志条目
+     *
+     * @param entry entry
+     */
+    void append(Entry entry);
+
+    /**
      * 推进commit Index
      *
      * @param index index

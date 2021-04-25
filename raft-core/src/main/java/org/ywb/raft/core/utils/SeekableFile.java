@@ -8,6 +8,13 @@ import java.io.IOException;
  * @since 1.0.0
  */
 public interface SeekableFile {
+    /**
+     * 获取当前位置
+     *
+     * @return current position
+     * @throws IOException e
+     */
+    long position() throws IOException;
 
     /**
      * 返回文件大小
@@ -31,25 +38,32 @@ public interface SeekableFile {
     void seek(long index) throws IOException;
 
     /**
-     * 开辟空间
+     * 裁剪到指定大小
      *
      * @param size 空间大小
      */
-    void truncate(long size);
+    void truncate(long size) throws IOException;
 
     /**
      * 读取一个int val
      *
      * @return val
      */
-    int readInt();
+    int readInt() throws IOException;
 
     /**
      * 从文件中读取长度为bytes.length的内容到byte数组
      *
      * @param bytes byte arr
      */
-    void read(byte[] bytes);
+    void read(byte[] bytes) throws IOException;
+
+    /**
+     * 强制刷新到磁盘
+     *
+     * @throws IOException E
+     */
+    void flush() throws IOException;
 
     /**
      * 关闭文件

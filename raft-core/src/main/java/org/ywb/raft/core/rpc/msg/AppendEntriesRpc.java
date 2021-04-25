@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ywb.raft.core.support.log.Entry;
+import org.ywb.raft.core.log.entry.Entry;
 import org.ywb.raft.core.support.meta.NodeId;
 
 import java.util.Collections;

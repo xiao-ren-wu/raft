@@ -19,6 +19,11 @@ public class RandomAccessFileAdapter implements SeekableFile {
     }
 
     @Override
+    public long position() throws IOException {
+        return randomAccessFile.getFilePointer();
+    }
+
+    @Override
     public long size() throws IOException {
         return randomAccessFile.length();
     }
@@ -34,17 +39,22 @@ public class RandomAccessFileAdapter implements SeekableFile {
     }
 
     @Override
-    public void truncate(long size) {
+    public void truncate(long size) throws IOException {
+        randomAccessFile.setLength(size);
     }
 
     @Override
-    public int readInt() {
-        return 0;
+    public int readInt() throws IOException {
+        return randomAccessFile.readInt();
     }
 
     @Override
-    public void read(byte[] bytes) {
+    public void read(byte[] bytes) throws IOException {
+        randomAccessFile.read(bytes);
+    }
 
+    @Override
+    public void flush() throws IOException {
     }
 
     @Override
