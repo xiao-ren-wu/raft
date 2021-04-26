@@ -78,4 +78,13 @@ public interface SeekableFile {
      * @param bytes append bytes
      */
     void write(byte[] bytes) throws IOException;
+
+    /**
+     * 读取一个长整数
+     *
+     * @return long
+     */
+    long readLong() throws IOException;
+
+    void writeLong(long l)throws IOException;
 }

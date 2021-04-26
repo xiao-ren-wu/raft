@@ -66,4 +66,14 @@ public class RandomAccessFileAdapter implements SeekableFile {
     public void write(byte[] bytes) throws IOException {
         randomAccessFile.write(bytes);
     }
+
+    @Override
+    public long readLong() throws IOException {
+        return randomAccessFile.readLong();
+    }
+
+    @Override
+    public void writeLong(long l) throws IOException {
+        randomAccessFile.writeLong(l);
+    }
 }

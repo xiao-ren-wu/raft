@@ -20,4 +20,10 @@ public abstract class Assert {
             throw e.get();
         }
     }
+
+    public static void nonNull(Object o) {
+        if (o == null) {
+            throw new NullPointerException();
+        }
+    }
 }

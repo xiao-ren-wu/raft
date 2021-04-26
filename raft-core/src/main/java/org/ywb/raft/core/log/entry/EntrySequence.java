@@ -1,8 +1,9 @@
-package org.ywb.raft.core.log;
+package org.ywb.raft.core.log.entry;
 
 import org.ywb.raft.core.log.entry.Entry;
 import org.ywb.raft.core.log.entry.EntryMeta;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -104,6 +105,11 @@ public interface EntrySequence {
 
     /**
      * 推进commit Index
+     * 该方法的主要作用是,把日志缓冲中的日志写入日志文件和日志条目索引中
+     * 不过，由于raft算法的特性，启动时把commitIndex设定为0，理论上可能新的commitIndex仍在文件中
+     * 比如集群中的Follower节点突然重启，假设重启这段时间没有新日志，Follower节点仍然收到来自Leader节点
+     * 的心跳信息并更新自己的commitIndex，很明显此时的commitIndex仍在文件中，对于commit方法来说
+     * 此时只需要更新自己的commitIndex即可。
      *
      * @param index index
      */
@@ -126,5 +132,5 @@ public interface EntrySequence {
     /**
      * 关闭
      */
-    void close();
+    void close() throws IOException;
 }

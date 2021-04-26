@@ -64,4 +64,15 @@ public class EntriesFile {
     }
 
 
+    public void truncate(long size) throws IOException {
+        seekableFile.truncate(size);
+    }
+
+    public void clear() throws IOException {
+        seekableFile.truncate(0);
+    }
+
+    public void close() throws IOException {
+        seekableFile.close();
+    }
 }

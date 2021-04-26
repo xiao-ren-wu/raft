@@ -81,10 +81,10 @@ public interface Log {
      *
      * @param prevLogIndex 上一条日志索引
      * @param prevLogTerm  上一条日志term
-     * @param entries      entries
+     * @param leaderEntries      entries
      * @return bool
      */
-    boolean appendEntriesFromLeader(int prevLogIndex, int prevLogTerm, List<Entry> entries);
+    boolean appendEntriesFromLeader(int prevLogIndex, int prevLogTerm, List<Entry> leaderEntries);
 
     /**
      * 推进commitIndex
