@@ -3,7 +3,6 @@ package org.ywb.raft.core.log;
 import org.ywb.raft.core.exceptions.EmptySequenceException;
 import org.ywb.raft.core.log.entry.Entry;
 import org.ywb.raft.core.log.entry.EntryMeta;
-import org.ywb.raft.core.log.entry.EntrySequence;
 import org.ywb.raft.core.utils.Assert;
 
 import java.util.Collections;
@@ -25,7 +24,7 @@ public abstract class AbstractEntrySequence implements EntrySequence {
 
     protected int logIndexOffset;
 
-    protected   int nextLogIndex;
+    protected  int nextLogIndex;
 
     public AbstractEntrySequence(int logIndexOffset) {
         this.logIndexOffset = logIndexOffset;

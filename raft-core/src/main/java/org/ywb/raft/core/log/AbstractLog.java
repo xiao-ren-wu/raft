@@ -55,12 +55,17 @@ public abstract class AbstractLog implements Log {
 
     @Override
     public int getNextIndex() {
-        return 0;
+        return entrySequence.getNextLogIndex();
     }
 
     @Override
     public int getCommitIndex() {
-        return 0;
+        return entrySequence.getCommitIndex();
+    }
+
+    @Override
+    public void close() {
+
     }
 
     @Override
@@ -127,12 +132,30 @@ public abstract class AbstractLog implements Log {
 
     @Override
     public void advanceCommitIndex(int newCommitIndex, int currentTerm) {
-
+        if (!validateNewCommitIndex(newCommitIndex, currentTerm)) {
+            return;
+        }
+        log.debug("advance commit index from {} to {}", newCommitIndex, currentTerm);
+        entrySequence.commit(newCommitIndex);
+        // todo advanceApplyIndex();
     }
 
-    @Override
-    public void close() {
-
+    private boolean validateNewCommitIndex(int newCommitIndex, int currentTerm) {
+        // 小于当前的commitIndex
+        if (newCommitIndex <= entrySequence.getCommitIndex()) {
+            return false;
+        }
+        EntryMeta meta = entrySequence.getEntryMeta(newCommitIndex);
+        if (Objects.isNull(meta)) {
+            log.debug("log of new commit index {} not found", newCommitIndex);
+            return false;
+        }
+        // 日志条目的term必须是当前的term，才能推进commitIndex
+        if (meta.getTerm() != currentTerm) {
+            log.debug("log term of new commit index != current term ({}!={})", meta.getTerm(), currentTerm);
+            return false;
+        }
+        return true;
     }
 
     private void removeEntriesAfter(int index) {

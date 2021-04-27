@@ -2,6 +2,7 @@ package org.ywb.raft.core.node;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ywb.raft.core.enums.RoleName;
+import org.ywb.raft.core.log.entry.EntryMeta;
 import org.ywb.raft.core.schedule.task.ElectionTimeoutTask;
 import org.ywb.raft.core.support.NodeContext;
 import org.ywb.raft.core.rpc.msg.*;
@@ -112,12 +113,14 @@ public class NodeImpl implements Node {
         // 变成candidate角色
         changeToRole(new CandidateNodeRole(newTerm, scheduleElectionTimeout()));
 
+        EntryMeta lastEntryMeta = context.getLog().getLastEntryMeta();
+
         // 发送requestVote消息
         RequestVoteRpc requestVoteRpc = RequestVoteRpc.builder()
                 .term(newTerm)
                 .candidateId(context.getSelfId())
-                .lastLogIndex(0)
-                .lastLogTerm(0)
+                .lastLogIndex(lastEntryMeta.getIndex())
+                .lastLogTerm(lastEntryMeta.getTerm())
                 .build();
         context.getConnector().sendRequestVote(requestVoteRpc, context.getNodeGroup().listEndpointExceptSelf());
     }

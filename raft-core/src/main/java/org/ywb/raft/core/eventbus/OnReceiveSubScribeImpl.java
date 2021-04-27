@@ -2,13 +2,14 @@ package org.ywb.raft.core.eventbus;
 
 import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
+import org.ywb.raft.core.log.entry.EntryMeta;
 import org.ywb.raft.core.node.Node;
+import org.ywb.raft.core.rpc.msg.*;
 import org.ywb.raft.core.schedule.task.ElectionTimeoutTask;
 import org.ywb.raft.core.schedule.task.LogReplicationTask;
 import org.ywb.raft.core.support.NodeContext;
 import org.ywb.raft.core.support.meta.GroupMember;
 import org.ywb.raft.core.support.meta.NodeId;
-import org.ywb.raft.core.rpc.msg.*;
 import org.ywb.raft.core.support.role.CandidateNodeRole;
 import org.ywb.raft.core.support.role.FollowerNodeRole;
 import org.ywb.raft.core.support.role.LeaderNodeRole;
@@ -16,7 +17,8 @@ import org.ywb.raft.core.utils.Assert;
 
 import java.util.Objects;
 
-import static org.ywb.raft.core.enums.RoleName.*;
+import static org.ywb.raft.core.enums.RoleName.CANDIDATE;
+import static org.ywb.raft.core.enums.RoleName.LEADER;
 
 /**
  * @author yuwenbo1
@@ -24,6 +26,7 @@ import static org.ywb.raft.core.enums.RoleName.*;
  * @since 1.0.0
  */
 @Slf4j
+@SuppressWarnings("all")
 public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
 
     private final Node node;
@@ -75,8 +78,7 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
             log.debug("term from rpc < current term, don't vote({}<{})", rpc.getTerm(), node.getRole().getTerm());
             return new RequestVoteResult(node.getRole().getTerm(), false);
         }
-        // 此处无条件投票
-        boolean voteForCandidate = true;
+        boolean voteForCandidate = !context.getLog().isNewThan(rpc.getLastLogIndex(), rpc.getLastLogTerm());
 
         // 此处的term比自己大，切换为Follower角色
         if (rpc.getTerm() > node.getRole().getTerm()) {
@@ -175,17 +177,21 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
 
     private void doReplicateLog() {
         log.debug("replicate log");
+        int nextIndex = context.getLog().getNextIndex();
+        EntryMeta lastEntryMeta = context.getLog().getLastEntryMeta();
+        int index = lastEntryMeta.getIndex();
+        int maxEntries = index - nextIndex;
         context.getNodeGroup()
                 .listReplicationTarget()
-                .forEach(this::doReplicateLogCore);
+                .forEach(groupMember -> doReplicateLogCore(groupMember, maxEntries));
     }
 
-    private void doReplicateLogCore(GroupMember member) {
+    private void doReplicateLogCore(GroupMember member, int maxEntries) {
         AppendEntriesRpc appendEntriesRpc = AppendEntriesRpc.builder()
                 .term(node.getRole().getTerm())
                 .leaderId(context.getSelfId())
-                .prevLogIndex(0)
-                .leaderCommit(0)
+                .prevLogIndex(member.getNextIndex())
+                .leaderCommit(maxEntries)
                 .build();
         context.getConnector().sendAppendEntries(appendEntriesRpc, member.getEndpoint());
     }

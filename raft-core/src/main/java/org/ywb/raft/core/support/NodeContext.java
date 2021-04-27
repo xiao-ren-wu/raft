@@ -2,6 +2,7 @@ package org.ywb.raft.core.support;
 
 import com.google.common.eventbus.EventBus;
 import lombok.Data;
+import org.ywb.raft.core.log.Log;
 import org.ywb.raft.core.node.NodeStore;
 import org.ywb.raft.core.rpc.Connector;
 import org.ywb.raft.core.schedule.Scheduler;
@@ -15,6 +16,7 @@ import org.ywb.raft.core.support.meta.NodeId;
  * @since 1.0.0
  */
 @Data
+@SuppressWarnings("all")
 public class NodeContext {
 
     /**
@@ -30,7 +32,7 @@ public class NodeContext {
     /**
      * 日志
      */
-    /// private Log log;
+     private Log log;
     /**
      * RPC组件
      */

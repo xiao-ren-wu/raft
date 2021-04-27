@@ -1,6 +1,7 @@
 package org.ywb.raft.core.log;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author yuwenbo1
@@ -26,14 +27,14 @@ public interface LogDir {
      *
      * @return file
      */
-    File getEntriesFile();
+    File getEntriesFile() throws IOException;
 
     /**
      * 获取entryIndexFile
      *
      * @return index file
      */
-    File getEntryOffsetIndexFile();
+    File getEntryOffsetIndexFile() throws IOException;
 
     /**
      * 获取目录

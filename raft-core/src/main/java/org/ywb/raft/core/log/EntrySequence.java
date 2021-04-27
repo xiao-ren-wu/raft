@@ -1,4 +1,4 @@
-package org.ywb.raft.core.log.entry;
+package org.ywb.raft.core.log;
 
 import org.ywb.raft.core.log.entry.Entry;
 import org.ywb.raft.core.log.entry.EntryMeta;

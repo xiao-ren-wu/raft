@@ -1,16 +1,21 @@
 package org.ywb.raft.core.node;
 
 import com.google.common.eventbus.EventBus;
+import org.ywb.raft.core.log.Log;
+import org.ywb.raft.core.log.MemoryLog;
 import org.ywb.raft.core.rpc.Connector;
 import org.ywb.raft.core.schedule.DefaultScheduler;
 import org.ywb.raft.core.schedule.Scheduler;
-import org.ywb.raft.core.support.*;
+import org.ywb.raft.core.support.NodeContext;
+import org.ywb.raft.core.support.SingleThreadTaskExecutor;
+import org.ywb.raft.core.support.TaskExecutor;
 import org.ywb.raft.core.support.meta.NodeEndpoint;
 import org.ywb.raft.core.support.meta.NodeGroup;
 import org.ywb.raft.core.support.meta.NodeId;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * @author yuwenbo1
@@ -30,6 +35,8 @@ public class NodeBuilder {
     private Scheduler scheduler;
 
     private Connector connector;
+
+    private Log log;
 
     private TaskExecutor taskExecutor = null;
 
@@ -58,6 +65,11 @@ public class NodeBuilder {
         return this;
     }
 
+    public NodeBuilder setLog(Log log) {
+        this.log = log;
+        return this;
+    }
+
     public NodeBuilder setNodeStore() {
         return this;
     }
@@ -72,6 +84,7 @@ public class NodeBuilder {
         context.setSelfId(selfId);
         context.setEventBus(eventBus);
         context.setConnector(connector);
+        context.setLog(Objects.isNull(log) ? new MemoryLog() : log);
         context.setNodeStore(nodeStore != null ? nodeStore : new FileNodeStore());
         context.setScheduler(scheduler != null ? scheduler : new DefaultScheduler(5000, 10000, 500, 1000));
         context.setTaskExecutor(taskExecutor != null ? taskExecutor : new SingleThreadTaskExecutor("node"));

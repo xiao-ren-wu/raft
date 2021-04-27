@@ -77,6 +77,7 @@ public class EntryIndexFile implements Iterable<EntryIndexItem> {
     private void load(SeekableFile seekableFile) throws IOException {
         if (seekableFile.size() == 0L) {
             entryIndexCount = 0;
+            return;
         }
         minEntryIndex = seekableFile.readInt();
         maxEntryIndex = seekableFile.readInt();
