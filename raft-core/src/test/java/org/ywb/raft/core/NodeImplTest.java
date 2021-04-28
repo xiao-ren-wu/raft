@@ -188,7 +188,7 @@ public class NodeImplTest {
         onReceiveSubScribe.onReceiveRequestVoteResult(new RequestVoteResult(1, true));
         onReceiveSubScribe.onReceiveAppendEntriesResult(new AppendEntriesResultMessage(
                 new AppendEntriesResult(1, true),
-                NodeId.of("B")
+                NodeId.of("B"),null
         ));
     }
 }

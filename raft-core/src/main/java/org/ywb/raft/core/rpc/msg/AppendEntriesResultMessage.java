@@ -19,7 +19,13 @@ public class AppendEntriesResultMessage {
 
     private NodeId sourceNodeId;
 
+    private AppendEntriesRpc appendEntriesRpc;
+
     public AppendEntriesResult get() {
         return appendEntriesResult;
+    }
+
+    public AppendEntriesRpc getRpc(){
+        return appendEntriesRpc;
     }
 }

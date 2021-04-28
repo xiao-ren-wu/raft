@@ -231,7 +231,13 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
     }
 
     private boolean appendEntries(AppendEntriesRpc rpc) {
-        return true;
+        boolean result = context.getLog()
+                .appendEntriesFromLeader(rpc.getPrevLogIndex(), rpc.getPrevLogTerm(), rpc.getEntries());
+        if (result) {
+            context.getLog()
+                    .advanceCommitIndex(Math.min(rpc.getLeaderCommit(), rpc.getLastEntryIndex()), rpc.getTerm());
+        }
+        return result;
     }
 
     private void doProcessAppendEntriesResult(AppendEntriesResultMessage resultMessage) {
@@ -245,5 +251,28 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
         if (node.getRole().getName() != LEADER) {
             log.warn("receive append entries result form node {} but current node is not leader,ignore", resultMessage.getSourceNodeId());
         }
+        NodeId sourceNodeId = resultMessage.getSourceNodeId();
+        GroupMember groupMember = context.getNodeGroup().findGroupMember(sourceNodeId);
+        if (groupMember == null) {
+            log.info("unexcepted append entries result from node {},node maybe removed", sourceNodeId);
+            return;
+        }
+        AppendEntriesRpc rpc = resultMessage.getRpc();
+        if (result.isSuccess()) {
+            // 回复成功
+            // 推进matchIndex和nextIndex
+            if (groupMember.advanceReplicatingState(rpc.getLastEntryIndex())) {
+                context.getLog()
+                        .advanceCommitIndex(
+                                context.getNodeGroup().getMatchIndexOfMajor(),
+                                node.getRole().getTerm());
+            } else {
+                // 对方回复失败,回退日志
+                if (!groupMember.backOffNextIndex()) {
+                    log.warn("cannot back off next index more,node {}", sourceNodeId);
+                }
+            }
+        }
+
     }
 }

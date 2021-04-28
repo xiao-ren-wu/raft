@@ -1,6 +1,7 @@
 package org.ywb.raft.core.support.meta;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.ywb.raft.core.support.ReplicatingState;
 import org.ywb.raft.core.utils.Assert;
 
@@ -23,6 +24,13 @@ public class GroupMember {
      */
     private final ReplicatingState replicatingState;
 
+    @Setter
+    @Getter
+    private boolean major;
+
+    @Setter
+    @Getter
+    private boolean removing = false;
 
     public GroupMember(NodeEndpoint endpoint) {
         this(endpoint, null);
@@ -46,4 +54,31 @@ public class GroupMember {
         return replicatingState;
     }
 
+
+    public boolean advanceReplicatingState(int lastEntryIndex) {
+        return ensureReplicatingState()
+                .advance(lastEntryIndex);
+    }
+
+    public boolean idEquals(NodeId nodeId) {
+        return getId().equals(nodeId);
+    }
+
+    public NodeId getId() {
+        return this.getEndpoint().getNodeId();
+    }
+
+    public boolean backOffNextIndex() {
+        return this.replicatingState.backOffNextIndex();
+    }
+
+    public void replicateNow() {
+        replicateAt(System.currentTimeMillis());
+    }
+
+    void replicateAt(long replicatedAt) {
+        ReplicatingState replicatingState = ensureReplicatingState();
+        replicatingState.setReplicating(true);
+        replicatingState.setLastReplicatedAt(replicatedAt);
+    }
 }

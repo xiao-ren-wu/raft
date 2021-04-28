@@ -51,4 +51,8 @@ public class AppendEntriesRpc {
      */
     private int leaderCommit;
 
+    /**
+     * todo ???
+     */
+    private int lastEntryIndex;
 }

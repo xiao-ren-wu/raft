@@ -1,23 +1,50 @@
 package org.ywb.raft.core.support;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author yuwenbo1
  * @date 2021/4/5 6:18 下午 星期一
  * @since 1.0.0
  * 日志复制记录
  */
-public interface ReplicatingState {
-    /**
-     * 获取nextIndex
-     *
-     * @return next index
-     */
-    int getNextIndex();
+@Getter
+@Setter
+public class ReplicatingState {
 
-    /**
-     * 获取matchIndex
-     *
-     * @return match index
-     */
-    int getMatchIndex();
+    private int nextIndex;
+    private int matchIndex;
+    private boolean replicating = false;
+    private long lastReplicatedAt = 0;
+
+    public ReplicatingState(int nextIndex) {
+        this(nextIndex, 0);
+    }
+
+    public ReplicatingState(int nextIndex, int matchIndex) {
+        this.nextIndex = nextIndex;
+        this.matchIndex = matchIndex;
+    }
+
+    public boolean advance(int lastEntryIndex) {
+        // changed
+        boolean result = (matchIndex != lastEntryIndex || nextIndex != (lastEntryIndex + 1));
+
+        matchIndex = lastEntryIndex;
+        nextIndex = lastEntryIndex + 1;
+
+        return result;
+    }
+
+    public boolean backOffNextIndex() {
+        if (nextIndex > 1) {
+            nextIndex--;
+            return true;
+        }
+        return false;
+    }
+
+
+
 }
