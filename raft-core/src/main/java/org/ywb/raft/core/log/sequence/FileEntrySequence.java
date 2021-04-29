@@ -1,8 +1,11 @@
-package org.ywb.raft.core.log.entry;
+package org.ywb.raft.core.log.sequence;
 
 import org.ywb.raft.core.exceptions.LogException;
-import org.ywb.raft.core.log.AbstractEntrySequence;
-import org.ywb.raft.core.log.LogDir;
+import org.ywb.raft.core.log.dir.LogDir;
+import org.ywb.raft.core.log.entry.EntriesFile;
+import org.ywb.raft.core.log.entry.Entry;
+import org.ywb.raft.core.log.entry.EntryMeta;
+import org.ywb.raft.core.log.index.EntryIndexFile;
 
 import java.io.IOException;
 import java.util.ArrayList;

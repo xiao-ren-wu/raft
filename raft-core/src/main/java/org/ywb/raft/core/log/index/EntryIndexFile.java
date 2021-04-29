@@ -1,4 +1,4 @@
-package org.ywb.raft.core.log.entry;
+package org.ywb.raft.core.log.index;
 
 import lombok.Getter;
 import org.ywb.raft.core.utils.RandomAccessFileAdapter;

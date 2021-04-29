@@ -1,7 +1,8 @@
-package org.ywb.raft.core.log.entry;
+package org.ywb.raft.core.log.index;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.ywb.raft.core.log.entry.EntryMeta;
 
 /**
  * @author yuwenbo1

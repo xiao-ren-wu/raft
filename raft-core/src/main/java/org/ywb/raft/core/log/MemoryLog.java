@@ -1,5 +1,7 @@
 package org.ywb.raft.core.log;
 
+import org.ywb.raft.core.log.sequence.MemoryEntrySequence;
+
 /**
  * @author yuwenbo1
  * @date 2021/4/27 7:37 上午 星期二

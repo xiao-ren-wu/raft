@@ -1,5 +1,7 @@
 package org.ywb.raft.core.log.entry;
 
+import org.ywb.raft.core.log.entry.Entry;
+import org.ywb.raft.core.log.entry.EntryFactory;
 import org.ywb.raft.core.utils.Assert;
 import org.ywb.raft.core.utils.RandomAccessFileAdapter;
 import org.ywb.raft.core.utils.SeekableFile;

@@ -2,6 +2,7 @@ package org.ywb.raft.core.log;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ywb.raft.core.log.entry.*;
+import org.ywb.raft.core.log.sequence.EntrySequence;
 import org.ywb.raft.core.rpc.msg.AppendEntriesRpc;
 import org.ywb.raft.core.support.meta.NodeId;
 import org.ywb.raft.core.utils.Assert;

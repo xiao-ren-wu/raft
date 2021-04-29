@@ -1,8 +1,6 @@
 package org.ywb.raft.core.log.entry;
 
 import lombok.ToString;
-import org.ywb.raft.core.log.entry.AbstractEntry;
-import org.ywb.raft.core.log.entry.Entry;
 
 /**
  * @author yuwenbo1

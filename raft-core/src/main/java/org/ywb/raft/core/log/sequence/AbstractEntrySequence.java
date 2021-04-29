@@ -1,4 +1,4 @@
-package org.ywb.raft.core.log;
+package org.ywb.raft.core.log.sequence;
 
 import org.ywb.raft.core.exceptions.EmptySequenceException;
 import org.ywb.raft.core.log.entry.Entry;

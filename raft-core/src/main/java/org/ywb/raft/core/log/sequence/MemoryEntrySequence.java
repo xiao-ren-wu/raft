@@ -1,7 +1,8 @@
-package org.ywb.raft.core.log;
+package org.ywb.raft.core.log.sequence;
 
 import lombok.ToString;
 import org.ywb.raft.core.log.entry.Entry;
+import org.ywb.raft.core.log.sequence.AbstractEntrySequence;
 
 import java.util.ArrayList;
 import java.util.List;

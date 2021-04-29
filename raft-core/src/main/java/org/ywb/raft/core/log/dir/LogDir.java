@@ -1,4 +1,4 @@
-package org.ywb.raft.core.log;
+package org.ywb.raft.core.log.dir;
 
 import java.io.File;
 import java.io.IOException;
