@@ -42,6 +42,7 @@ public class EntryIndexFile implements Iterable<EntryIndexItem> {
     /**
      * 日志条目数
      */
+    @Getter
     private int entryIndexCount;
 
     private final SeekableFile seekableFile;
@@ -58,7 +59,7 @@ public class EntryIndexFile implements Iterable<EntryIndexItem> {
     @Getter
     private int maxEntryIndex;
 
-    private Map<Integer,EntryIndexItem> entryIndexItemMap = new HashMap<>();
+    private final Map<Integer,EntryIndexItem> entryIndexItemMap = new HashMap<>();
 
     public EntryIndexFile(File file) throws IOException {
         this(new RandomAccessFileAdapter(file));
@@ -114,7 +115,7 @@ public class EntryIndexFile implements Iterable<EntryIndexItem> {
                 throw new IllegalArgumentException("index must be " + (maxEntryIndex + 1) + ",but was" + index);
             }
             seekableFile.seek(OFFSET_MAX_ENTRY_INDEX);
-
+        }
             seekableFile.writeInt(index);
             this.maxEntryIndex = index;
             updateEntryIndexCount();
@@ -123,9 +124,7 @@ public class EntryIndexFile implements Iterable<EntryIndexItem> {
             seekableFile.writeLong(offset);
             seekableFile.writeInt(kind);
             seekableFile.writeInt(term);
-
             entryIndexItemMap.put(index, new EntryIndexItem(index, offset, kind, term));
-        }
     }
 
     private long getOffsetOfEntryIndexItem(int index) {

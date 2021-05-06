@@ -25,4 +25,12 @@ public class EntryIndexItem {
     public EntryMeta toEntryMeta() {
         return this.entryMeta;
     }
+
+    public int getKind() {
+        return this.entryMeta.getKind();
+    }
+
+    public int getTerm() {
+        return this.entryMeta.getTerm();
+    }
 }

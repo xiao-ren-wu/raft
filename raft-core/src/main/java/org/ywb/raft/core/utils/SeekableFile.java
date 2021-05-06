@@ -1,6 +1,7 @@
 package org.ywb.raft.core.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author yuwenbo1
@@ -86,5 +87,7 @@ public interface SeekableFile {
      */
     long readLong() throws IOException;
 
-    void writeLong(long l)throws IOException;
+    void writeLong(long l) throws IOException;
+
+    InputStream inputStream(long start) throws IOException;
 }

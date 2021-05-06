@@ -16,6 +16,6 @@ public class NoOpEntry extends AbstractEntry {
 
     @Override
     public byte[] getCommandBytes() {
-        return new byte[0];
+        return null;
     }
 }

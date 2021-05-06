@@ -1,9 +1,8 @@
 package org.ywb.raft.core.utils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.io.*;
 
 /**
  * @author yuwenbo1
@@ -75,5 +74,10 @@ public class RandomAccessFileAdapter implements SeekableFile {
     @Override
     public void writeLong(long l) throws IOException {
         randomAccessFile.writeLong(l);
+    }
+
+    @Override
+    public InputStream inputStream(long start) throws IOException {
+        throw new NotImplementedException();
     }
 }

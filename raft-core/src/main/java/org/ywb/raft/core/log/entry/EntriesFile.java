@@ -1,7 +1,5 @@
 package org.ywb.raft.core.log.entry;
 
-import org.ywb.raft.core.log.entry.Entry;
-import org.ywb.raft.core.log.entry.EntryFactory;
 import org.ywb.raft.core.utils.Assert;
 import org.ywb.raft.core.utils.RandomAccessFileAdapter;
 import org.ywb.raft.core.utils.SeekableFile;
@@ -9,6 +7,7 @@ import org.ywb.raft.core.utils.SeekableFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author yuwenbo1
@@ -41,8 +40,12 @@ public class EntriesFile {
         seekableFile.writeInt(entry.getIndex());
         seekableFile.writeInt(entry.getTerm());
         byte[] commandBytes = entry.getCommandBytes();
-        seekableFile.writeInt(commandBytes.length);
-        seekableFile.write(commandBytes);
+        if (Objects.nonNull(commandBytes)) {
+            seekableFile.writeInt(commandBytes.length);
+            seekableFile.write(commandBytes);
+        } else {
+            seekableFile.writeInt(0);
+        }
         return offset;
     }
 
