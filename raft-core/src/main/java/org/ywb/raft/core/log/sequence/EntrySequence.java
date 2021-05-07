@@ -133,4 +133,12 @@ public interface EntrySequence {
      * 关闭
      */
     void close() throws IOException;
+
+    /**
+     * 获取子视图
+     *
+     * @param fromIndex 起始坐标
+     * @return sub list
+     */
+    List<Entry> subView(int fromIndex);
 }

@@ -201,12 +201,14 @@ public class FileEntrySequence extends AbstractEntrySequence {
 
     private void initialize() {
         if (entryIndexFile.isEmpty()) {
+            commitIndex = logIndexOffset - 1;
             return;
         }
         // 使用日志索引文件的minEntryIndex作为logIndexOffset
         logIndexOffset = entryIndexFile.getMinEntryIndex();
         // 使用日志索引文件的maxIndexFie#getMaxEntryIndex加1作为nextLongOffset
         nextLogIndex = entryIndexFile.getMaxEntryIndex() + 1;
+        commitIndex = entryIndexFile.getMaxEntryIndex();
     }
 
     private Entry getEntryInFile(int index) {

@@ -123,6 +123,13 @@ public abstract class AbstractEntrySequence implements EntrySequence {
         nextLogIndex++;
     }
 
+    @Override
+    public List<Entry> subView(int fromIndex) {
+        if (isEmpty() || fromIndex > doGetLastLogIndex()) {
+            return Collections.emptyList();
+        }
+        return subList(Math.max(fromIndex, doGetFirstLogIndex()), nextLogIndex);
+    }
 
     /**
      * 获取指定索引的日志条目
@@ -163,4 +170,6 @@ public abstract class AbstractEntrySequence implements EntrySequence {
     protected int doGetLastLogIndex() {
         return nextLogIndex - 1;
     }
+
+
 }

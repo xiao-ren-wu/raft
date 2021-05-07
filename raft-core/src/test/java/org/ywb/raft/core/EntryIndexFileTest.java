@@ -8,6 +8,7 @@ import org.ywb.raft.core.log.index.EntryIndexItem;
 import org.ywb.raft.core.utils.ByteArraySeekAbleFile;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * @author yuwenbo1
@@ -59,24 +60,68 @@ public class EntryIndexFileTest {
         // min entry index
         Assertions.assertEquals(10,seekAbleFile.readInt());
         // max entry index
-        Assertions.assertEquals(10,seekAbleFile.readInt());
+        Assertions.assertEquals(10, seekAbleFile.readInt());
         // offset
-        Assertions.assertEquals(100L,seekAbleFile.readLong());
+        Assertions.assertEquals(100L, seekAbleFile.readLong());
         // kind
-        Assertions.assertEquals(1,seekAbleFile.readInt());
+        Assertions.assertEquals(1, seekAbleFile.readInt());
         // term
-        Assertions.assertEquals(2,seekAbleFile.readInt());
+        Assertions.assertEquals(2, seekAbleFile.readInt());
 
         EntryIndexItem entryIndexItem = file.get(10);
         Assertions.assertNotNull(entryIndexItem);
-        Assertions.assertEquals(100L,entryIndexItem.getOffset());
-        Assertions.assertEquals(1,entryIndexItem.getKind());
-        Assertions.assertEquals(2,entryIndexItem.getTerm());
-        file.appendEntryIndex(11,200L,1,2);
+        Assertions.assertEquals(100L, entryIndexItem.getOffset());
+        Assertions.assertEquals(1, entryIndexItem.getKind());
+        Assertions.assertEquals(2, entryIndexItem.getTerm());
+        file.appendEntryIndex(11, 200L, 1, 2);
 
-        Assertions.assertEquals(2,file.getEntryIndexCount());
-        Assertions.assertEquals(10,file.getMinEntryIndex());
-        Assertions.assertEquals(11,file.getMaxEntryIndex());
+        Assertions.assertEquals(2, file.getEntryIndexCount());
+        Assertions.assertEquals(10, file.getMinEntryIndex());
+        Assertions.assertEquals(11, file.getMaxEntryIndex());
     }
 
+    @Test
+    public void testClear() throws Exception {
+        ByteArraySeekAbleFile seekAbleFile = makeEntryIndexFileContent(5, 6);
+        EntryIndexFile file = new EntryIndexFile(seekAbleFile);
+        Assertions.assertFalse(file.isEmpty());
+        file.clear();
+        Assertions.assertTrue(file.isEmpty());
+        Assertions.assertEquals(0, file.getEntryIndexCount());
+        Assertions.assertEquals(0, seekAbleFile.size());
+    }
+
+
+    @Test
+    public void testRemoveAfter() throws IOException {
+        ByteArraySeekAbleFile seekAbleFile = makeEntryIndexFileContent(5, 6);
+        EntryIndexFile file = new EntryIndexFile(seekAbleFile);
+        long oldSize = seekAbleFile.size();
+        file.removeAfter(6);
+        Assertions.assertEquals(5, file.getMinEntryIndex());
+        Assertions.assertEquals(6, file.getMaxEntryIndex());
+        Assertions.assertEquals(2, file.getEntryIndexCount());
+    }
+
+    @Test
+    public void testGet() throws IOException {
+        EntryIndexFile file = new EntryIndexFile(makeEntryIndexFileContent(3, 4));
+        EntryIndexItem entryIndexItem = file.get(3);
+        Assertions.assertNotNull(entryIndexItem);
+        Assertions.assertEquals(1, entryIndexItem.getKind());
+        Assertions.assertEquals(3, entryIndexItem.getTerm());
+    }
+
+    @Test
+    public void testIterator() throws IOException {
+        EntryIndexFile file = new EntryIndexFile(makeEntryIndexFileContent(3, 4));
+        Iterator<EntryIndexItem> iterator = file.iterator();
+        Assertions.assertTrue(iterator.hasNext());
+        EntryIndexItem item = iterator.next();
+        Assertions.assertEquals(3,item.getIndex());
+        Assertions.assertEquals(1,item.getKind());
+        Assertions.assertTrue(iterator.hasNext());
+        EntryIndexItem next = iterator.next();
+        Assertions.assertFalse(iterator.hasNext());
+    }
 }

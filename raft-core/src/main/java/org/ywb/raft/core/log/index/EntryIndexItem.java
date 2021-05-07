@@ -33,4 +33,8 @@ public class EntryIndexItem {
     public int getTerm() {
         return this.entryMeta.getTerm();
     }
+
+    public int getIndex() {
+        return this.entryMeta.getIndex();
+    }
 }
