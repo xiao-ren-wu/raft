@@ -64,8 +64,8 @@
 
             <dependency>
                 <groupId>io.netty</groupId>
-                <artifactId>netty-handler</artifactId>
-                <version>4.1.59.Final</version>
+                <artifactId>netty-all</artifactId>
+                <version>4.1.54.Final</version>
             </dependency>
 
             <dependency>

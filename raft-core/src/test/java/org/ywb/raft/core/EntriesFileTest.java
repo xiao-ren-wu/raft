@@ -6,6 +6,7 @@ import org.ywb.raft.core.log.entry.EntriesFile;
 import org.ywb.raft.core.log.entry.Entry;
 import org.ywb.raft.core.log.entry.GeneralEntry;
 import org.ywb.raft.core.log.entry.NoOpEntry;
+import org.ywb.raft.core.proto.Protos;
 import org.ywb.raft.core.utils.ByteArraySeekAbleFile;
 
 import java.io.IOException;
@@ -71,6 +72,7 @@ public class EntriesFileTest {
         file.appendEntry(new NoOpEntry(2,3));
         Assertions.assertTrue(seekAbleFile.size()>0);
         file.truncate(0L);
-        Assertions.assertEquals(0,seekAbleFile);
+        Assertions.assertEquals(0,seekAbleFile.size());
+        Protos.RequestVoteRpc defaultInstance = Protos.RequestVoteRpc.getDefaultInstance();
     }
 }

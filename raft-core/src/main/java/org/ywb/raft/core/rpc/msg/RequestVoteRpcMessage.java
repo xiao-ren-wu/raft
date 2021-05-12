@@ -3,6 +3,7 @@ package org.ywb.raft.core.rpc.msg;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ywb.raft.core.rpc.Channel;
 import org.ywb.raft.core.support.meta.NodeId;
 
 /**
@@ -18,6 +19,8 @@ public class RequestVoteRpcMessage {
     private RequestVoteRpc rpc;
 
     private NodeId sourceNodeId;
+
+    private Channel channel;
 
     public RequestVoteRpc get() {
         return rpc;

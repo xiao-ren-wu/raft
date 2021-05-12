@@ -28,7 +28,7 @@ import java.util.Collection;
  */
 @Slf4j
 @SuppressWarnings("all")
-public class NettyConnector implements Connector {
+public class RaftNettyConnector implements Connector {
 
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();
 
@@ -45,9 +45,9 @@ public class NettyConnector implements Connector {
 
     private final InboundChannelGroup inboundChannelGroup = new InboundChannelGroup();
 
-    private final OutBoundChannelGroup outBoundChannelGroup;
+    private final OutboundChannelGroup outBoundChannelGroup;
 
-    public NettyConnector(
+    public RaftNettyConnector(
             NioEventLoopGroup workerGroup,
             boolean workerGroupShared,
             NodeId selfNodeId,
@@ -58,7 +58,7 @@ public class NettyConnector implements Connector {
         this.workerGroupShared = workerGroupShared;
         this.eventBus = eventBus;
         this.port = port;
-        outBoundChannelGroup = new OutBoundChannelGroup(workerGroup, eventBus, selfNodeId);
+        outBoundChannelGroup = new OutboundChannelGroup(workerGroup, eventBus, selfNodeId);
     }
 
     @Override
@@ -85,22 +85,24 @@ public class NettyConnector implements Connector {
 
     @Override
     public void sendRequestVote(RequestVoteRpc rpc, Collection<NodeEndpoint> destinationEndpoints) {
-
+        destinationEndpoints.forEach(endpoint -> {
+            getChannel(endpoint).writeRequestVoteRpc(rpc);
+        });
     }
 
     @Override
     public void replyRequestVote(RequestVoteResult result, NodeEndpoint destinationEndpoint) {
-
+        getChannel(destinationEndpoint).writeRequestVoteResult(result);
     }
 
     @Override
     public void sendAppendEntries(AppendEntriesRpc rpc, NodeEndpoint destinationEndpoint) {
-
+        getChannel(destinationEndpoint).writeAppendEntriesRpc(rpc);
     }
 
     @Override
     public void replyEntries(AppendEntriesResult result, NodeEndpoint destinationEndpoint) {
-
+        getChannel(destinationEndpoint).writeAppendEntriesResult(result);
     }
 
     @Override
@@ -112,5 +114,9 @@ public class NettyConnector implements Connector {
         if (!workerGroupShared) {
             workerGroup.shutdownGracefully();
         }
+    }
+
+    private Channel getChannel(NodeEndpoint endpoint) {
+        return outBoundChannelGroup.getOrConnect(endpoint.getNodeId(), endpoint.getAddress());
     }
 }
