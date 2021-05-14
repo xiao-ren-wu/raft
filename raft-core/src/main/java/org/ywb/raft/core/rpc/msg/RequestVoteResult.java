@@ -1,10 +1,13 @@
 package org.ywb.raft.core.rpc.msg;
 
+import lombok.Builder;
+
 /**
  * @author yuwenbo1
  * @date 2021/4/6 11:26 下午 星期二
  * @since 1.0.0
  */
+@Builder
 public class RequestVoteResult {
 
     /**

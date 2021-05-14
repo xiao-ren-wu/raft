@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.ywb.raft.core.enums.MessageConstants;
 import org.ywb.raft.core.proto.Protos;
+import org.ywb.raft.core.rpc.msg.RequestVoteResult;
 import org.ywb.raft.core.rpc.msg.RequestVoteRpc;
 import org.ywb.raft.core.support.meta.NodeId;
 
@@ -27,7 +28,7 @@ import static org.ywb.raft.core.enums.MessageConstants.VERSION;
 public class Encoder extends MessageToByteEncoder<Object> {
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, Object msg, ByteBuf out) throws Exception {
+    public void encode(ChannelHandlerContext channelHandlerContext, Object msg, ByteBuf out) throws Exception {
         if (msg instanceof NodeId) {
             this.writeMessage(out, MessageConstants.MSG_TYPE_NODE_ID, ((NodeId) msg).getVal().getBytes(StandardCharsets.UTF_8));
         } else if (msg instanceof RequestVoteRpc) {
@@ -39,6 +40,13 @@ public class Encoder extends MessageToByteEncoder<Object> {
                     .setLastLogTerm(requestVoteRpc.getLastLogTerm())
                     .build();
             this.writeMessage(out, MessageConstants.MSG_TYPE_REQUEST_VOTE_RPC, protoRpc.toByteArray());
+        } else if (msg instanceof RequestVoteResult) {
+            RequestVoteResult requestVoteResult = (RequestVoteResult) msg;
+            Protos.RequestVoteResult voteResultProto = Protos.RequestVoteResult.newBuilder()
+                    .setTerm(requestVoteResult.getTerm())
+                    .setVoteGranted(requestVoteResult.isVoteGranted())
+                    .build();
+            this.writeMessage(out, MessageConstants.MSG_TYPE_REQUEST_VOTE_RESULT, voteResultProto.toByteArray());
         }
     }
 

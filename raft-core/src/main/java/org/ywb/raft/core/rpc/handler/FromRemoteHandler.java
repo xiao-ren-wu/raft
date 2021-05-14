@@ -23,8 +23,8 @@ public class FromRemoteHandler extends AbstractHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof NodeId) {
-            remoteId = (NodeId) msg;
-            channel = new NioChannel(ctx.channel());
+            super.remoteId = (NodeId) msg;
+            super.channel = new NioChannel(ctx.channel());
             channelGroup.add(remoteId, channel);
             return;
         }

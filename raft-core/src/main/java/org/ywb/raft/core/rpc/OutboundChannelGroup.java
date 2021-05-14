@@ -46,7 +46,7 @@ public class OutboundChannelGroup {
     public NioChannel getOrConnect(NodeId nodeId, Address address) {
         Future<NioChannel> future = channelMap.get(nodeId);
         if (Objects.isNull(future)) {
-            FutureTask<NioChannel> newFuture = new FutureTask<NioChannel>(() -> connect(nodeId, address));
+            FutureTask<NioChannel> newFuture = new FutureTask<>(() -> connect(nodeId, address));
             future = channelMap.putIfAbsent(nodeId, newFuture);
             if (Objects.isNull(future)) {
                 future = newFuture;

@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.ywb.raft.core.exceptions.MagicCodeErrorException;
 import org.ywb.raft.core.proto.Protos;
+import org.ywb.raft.core.rpc.msg.RequestVoteResult;
 import org.ywb.raft.core.rpc.msg.RequestVoteRpc;
 import org.ywb.raft.core.support.meta.NodeId;
 import org.ywb.raft.core.utils.Assert;
@@ -14,7 +15,6 @@ import java.util.List;
 
 import static org.ywb.raft.core.enums.MessageConstants.*;
 
-
 /**
  * @author yuwenbo1
  * @date 2021/5/10 10:51 下午 星期一
@@ -23,7 +23,7 @@ import static org.ywb.raft.core.enums.MessageConstants.*;
 public class Decoder extends ByteToMessageDecoder {
 
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf in, List<Object> out) throws Exception {
+    public void decode(ChannelHandlerContext channelHandlerContext, ByteBuf in, List<Object> out) throws Exception {
         int availableByte = in.readableBytes();
         // 是否多余16个字节可读，16字节为自定义协议header的长度
         if (availableByte < HEADER_LEN) {
@@ -60,6 +60,14 @@ public class Decoder extends ByteToMessageDecoder {
                         .term(requestVoteRpc.getTerm())
                         .build();
                 out.add(voteRpc);
+                break;
+            case MSG_TYPE_REQUEST_VOTE_RESULT:
+                Protos.RequestVoteResult requestVoteResult = Protos.RequestVoteResult.parseFrom(payload);
+                RequestVoteResult voteResult = RequestVoteResult.builder()
+                        .voteGranted(requestVoteResult.getVoteGranted())
+                        .term(requestVoteResult.getTerm())
+                        .build();
+                out.add(voteResult);
                 break;
             default:
         }

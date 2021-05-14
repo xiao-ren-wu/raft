@@ -22,6 +22,11 @@ public class RequestVoteRpcMessage {
 
     private Channel channel;
 
+    public RequestVoteRpcMessage(RequestVoteRpc rpc, NodeId sourceNodeId) {
+        this.rpc = rpc;
+        this.sourceNodeId = sourceNodeId;
+    }
+
     public RequestVoteRpc get() {
         return rpc;
     }

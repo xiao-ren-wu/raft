@@ -1356,6 +1356,18 @@ public final class Protos {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <code>string message_id = 1;</code>
+     * @return The messageId.
+     */
+    java.lang.String getMessageId();
+    /**
+     * <code>string message_id = 1;</code>
+     * @return The bytes for messageId.
+     */
+    com.google.protobuf.ByteString
+        getMessageIdBytes();
+
+    /**
      * <code>int32 term = 2;</code>
      * @return The term.
      */
@@ -1428,6 +1440,7 @@ public final class Protos {
       super(builder);
     }
     private AppendEntriesRpc() {
+      messageId_ = "";
       leaderId_ = "";
       entries_ = java.util.Collections.emptyList();
     }
@@ -1463,6 +1476,12 @@ public final class Protos {
             case 0:
               done = true;
               break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              messageId_ = s;
+              break;
+            }
             case 16: {
 
               term_ = input.readInt32();
@@ -2014,9 +2033,7 @@ public final class Protos {
         }
 
         public Builder mergeFrom(org.ywb.raft.core.proto.Protos.AppendEntriesRpc.Entry other) {
-          if (other == org.ywb.raft.core.proto.Protos.AppendEntriesRpc.Entry.getDefaultInstance()) {
-              return this;
-          }
+          if (other == org.ywb.raft.core.proto.Protos.AppendEntriesRpc.Entry.getDefaultInstance()) return this;
           if (other.getKind() != 0) {
             setKind(other.getKind());
           }
@@ -2237,6 +2254,44 @@ public final class Protos {
 
     }
 
+    public static final int MESSAGE_ID_FIELD_NUMBER = 1;
+    private volatile java.lang.Object messageId_;
+    /**
+     * <code>string message_id = 1;</code>
+     * @return The messageId.
+     */
+    @java.lang.Override
+    public java.lang.String getMessageId() {
+      java.lang.Object ref = messageId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        messageId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string message_id = 1;</code>
+     * @return The bytes for messageId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getMessageIdBytes() {
+      java.lang.Object ref = messageId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        messageId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     public static final int TERM_FIELD_NUMBER = 2;
     private int term_;
     /**
@@ -2373,6 +2428,9 @@ public final class Protos {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (!getMessageIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, messageId_);
+      }
       if (term_ != 0) {
         output.writeInt32(2, term_);
       }
@@ -2400,6 +2458,9 @@ public final class Protos {
       if (size != -1) return size;
 
       size = 0;
+      if (!getMessageIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, messageId_);
+      }
       if (term_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, term_);
@@ -2438,6 +2499,8 @@ public final class Protos {
       }
       org.ywb.raft.core.proto.Protos.AppendEntriesRpc other = (org.ywb.raft.core.proto.Protos.AppendEntriesRpc) obj;
 
+      if (!getMessageId()
+          .equals(other.getMessageId())) return false;
       if (getTerm()
           != other.getTerm()) return false;
       if (!getLeaderId()
@@ -2461,6 +2524,8 @@ public final class Protos {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + MESSAGE_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getMessageId().hashCode();
       hash = (37 * hash) + TERM_FIELD_NUMBER;
       hash = (53 * hash) + getTerm();
       hash = (37 * hash) + LEADER_ID_FIELD_NUMBER;
@@ -2609,6 +2674,8 @@ public final class Protos {
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        messageId_ = "";
+
         term_ = 0;
 
         leaderId_ = "";
@@ -2652,6 +2719,7 @@ public final class Protos {
       public org.ywb.raft.core.proto.Protos.AppendEntriesRpc buildPartial() {
         org.ywb.raft.core.proto.Protos.AppendEntriesRpc result = new org.ywb.raft.core.proto.Protos.AppendEntriesRpc(this);
         int from_bitField0_ = bitField0_;
+        result.messageId_ = messageId_;
         result.term_ = term_;
         result.leaderId_ = leaderId_;
         result.prevLogIndex_ = prevLogIndex_;
@@ -2714,6 +2782,10 @@ public final class Protos {
 
       public Builder mergeFrom(org.ywb.raft.core.proto.Protos.AppendEntriesRpc other) {
         if (other == org.ywb.raft.core.proto.Protos.AppendEntriesRpc.getDefaultInstance()) return this;
+        if (!other.getMessageId().isEmpty()) {
+          messageId_ = other.messageId_;
+          onChanged();
+        }
         if (other.getTerm() != 0) {
           setTerm(other.getTerm());
         }
@@ -2785,6 +2857,82 @@ public final class Protos {
         return this;
       }
       private int bitField0_;
+
+      private java.lang.Object messageId_ = "";
+      /**
+       * <code>string message_id = 1;</code>
+       * @return The messageId.
+       */
+      public java.lang.String getMessageId() {
+        java.lang.Object ref = messageId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          messageId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string message_id = 1;</code>
+       * @return The bytes for messageId.
+       */
+      public com.google.protobuf.ByteString
+          getMessageIdBytes() {
+        java.lang.Object ref = messageId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          messageId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string message_id = 1;</code>
+       * @param value The messageId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessageId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        messageId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string message_id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMessageId() {
+        
+        messageId_ = getDefaultInstance().getMessageId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string message_id = 1;</code>
+       * @param value The bytes for messageId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessageIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        messageId_ = value;
+        onChanged();
+        return this;
+      }
 
       private int term_ ;
       /**
@@ -3875,15 +4023,15 @@ public final class Protos {
       " \001(\005\022\024\n\014candidate_id\030\002 \001(\t\022\026\n\016last_log_i" +
       "ndex\030\003 \001(\005\022\025\n\rlast_log_term\030\004 \001(\005\"7\n\021Req" +
       "uestVoteResult\022\014\n\004term\030\001 \001(\005\022\024\n\014vote_gra" +
-      "nted\030\002 \001(\010\"\345\001\n\020AppendEntriesRpc\022\014\n\004term\030" +
-      "\002 \001(\005\022\021\n\tleader_id\030\003 \001(\t\022\026\n\016prev_log_ind" +
-      "ex\030\004 \001(\005\022\025\n\rprev_log_term\030\005 \001(\005\022\025\n\rleade" +
-      "r_commit\030\006 \001(\005\022(\n\007entries\030\007 \003(\0132\027.Append" +
-      "EntriesRpc.Entry\032@\n\005Entry\022\014\n\004kind\030\001 \001(\005\022" +
-      "\r\n\005index\030\002 \001(\005\022\014\n\004term\030\003 \001(\005\022\014\n\004data\030\004 \001" +
-      "(\014\"4\n\023AppendEntriesResult\022\014\n\004term\030\002 \001(\005\022" +
-      "\017\n\007success\030\003 \001(\010B!\n\027org.ywb.raft.core.pr" +
-      "otoB\006Protosb\006proto3"
+      "nted\030\002 \001(\010\"\371\001\n\020AppendEntriesRpc\022\022\n\nmessa" +
+      "ge_id\030\001 \001(\t\022\014\n\004term\030\002 \001(\005\022\021\n\tleader_id\030\003" +
+      " \001(\t\022\026\n\016prev_log_index\030\004 \001(\005\022\025\n\rprev_log" +
+      "_term\030\005 \001(\005\022\025\n\rleader_commit\030\006 \001(\005\022(\n\007en" +
+      "tries\030\007 \003(\0132\027.AppendEntriesRpc.Entry\032@\n\005" +
+      "Entry\022\014\n\004kind\030\001 \001(\005\022\r\n\005index\030\002 \001(\005\022\014\n\004te" +
+      "rm\030\003 \001(\005\022\014\n\004data\030\004 \001(\014\"4\n\023AppendEntriesR" +
+      "esult\022\014\n\004term\030\002 \001(\005\022\017\n\007success\030\003 \001(\010B!\n\027" +
+      "org.ywb.raft.core.protoB\006Protosb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -3906,7 +4054,7 @@ public final class Protos {
     internal_static_AppendEntriesRpc_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_AppendEntriesRpc_descriptor,
-        new java.lang.String[] { "Term", "LeaderId", "PrevLogIndex", "PrevLogTerm", "LeaderCommit", "Entries", });
+        new java.lang.String[] { "MessageId", "Term", "LeaderId", "PrevLogIndex", "PrevLogTerm", "LeaderCommit", "Entries", });
     internal_static_AppendEntriesRpc_Entry_descriptor =
       internal_static_AppendEntriesRpc_descriptor.getNestedTypes().get(0);
     internal_static_AppendEntriesRpc_Entry_fieldAccessorTable = new

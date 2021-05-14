@@ -18,13 +18,13 @@ public class ToRemoteHandler extends AbstractHandler {
 
     public ToRemoteHandler(EventBus eventBus, NodeId remoteId, NodeId selfNodeId) {
         super(eventBus);
-        this.remoteId = remoteId;
+        super.remoteId = remoteId;
         this.selfNodeId = selfNodeId;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.write(selfNodeId);
-        channel = new NioChannel(ctx.channel());
+        super.channel = new NioChannel(ctx.channel());
     }
 }
