@@ -12,6 +12,7 @@ message RequestVoteResult {
     bool vote_granted = 2;
 }
 message AppendEntriesRpc {
+    string message_id = 1;
     int32 term = 2;
     string leader_id = 3;
     int32 prev_log_index = 4;
