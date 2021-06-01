@@ -164,7 +164,7 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
 
     private LogReplicationTask scheduleLogReplicationTask() {
         return context.getScheduler()
-                .scheduleLogReplicationTask(() -> context.getTaskExecutor().submit(this::doReplicateLog));
+                .scheduleLogReplicationTask(() -> context.getTaskExecutor().submit(()->node.doReplicateLog()));
     }
 
 ///    /**
@@ -175,26 +175,7 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
 //        context.getTaskExecutor().submit(this::doReplicateLog);
 //    }
 
-    private void doReplicateLog() {
-        log.debug("replicate log");
-        int nextIndex = context.getLog().getNextIndex();
-        EntryMeta lastEntryMeta = context.getLog().getLastEntryMeta();
-        int index = lastEntryMeta.getIndex();
-        int maxEntries = index - nextIndex;
-        context.getNodeGroup()
-                .listReplicationTarget()
-                .forEach(groupMember -> doReplicateLogCore(groupMember, maxEntries));
-    }
 
-    private void doReplicateLogCore(GroupMember member, int maxEntries) {
-        AppendEntriesRpc appendEntriesRpc = AppendEntriesRpc.builder()
-                .term(node.getRole().getTerm())
-                .leaderId(context.getSelfId())
-                .prevLogIndex(member.getNextIndex())
-                .leaderCommit(maxEntries)
-                .build();
-        context.getConnector().sendAppendEntries(appendEntriesRpc, member.getEndpoint());
-    }
 
     private AppendEntriesResult doProcessEntriesRpc(AppendEntriesRpcMessage rpcMessage) {
         AppendEntriesRpc rpc = rpcMessage.get();

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.ywb.raft.core.enums.RoleName;
 import org.ywb.raft.core.schedule.task.ElectionTimeoutTask;
+import org.ywb.raft.core.support.meta.NodeId;
 
 /**
  * @author yuwenbo1
@@ -36,5 +37,10 @@ public class CandidateNodeRole extends AbstractNodeRole {
     @Override
     public void cancelTimeoutOrTask() {
         electionTimeout.cancel();
+    }
+
+    @Override
+    protected NodeId getLeaderId() {
+        return null;
     }
 }

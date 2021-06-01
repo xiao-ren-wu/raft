@@ -11,7 +11,7 @@ import org.ywb.raft.core.support.meta.NodeId;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.ywb.raft.core.enums.MessageConstants.MAGIC;
+import static org.ywb.raft.core.enums.MessageConstants.RAFT_MAGIC;
 import static org.ywb.raft.core.enums.MessageConstants.VERSION;
 
 /**
@@ -51,7 +51,7 @@ public class Encoder extends MessageToByteEncoder<Object> {
     }
 
     private void writeMessage(ByteBuf out, int msgType, byte[] bytes) {
-        out.writeInt(MAGIC);
+        out.writeInt(RAFT_MAGIC);
         out.writeInt(VERSION);
         out.writeInt(msgType);
         out.writeInt(bytes.length);

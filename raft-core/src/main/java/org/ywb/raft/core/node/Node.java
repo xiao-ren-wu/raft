@@ -1,6 +1,8 @@
 package org.ywb.raft.core.node;
 
+import org.ywb.raft.core.node.support.RoleNameAndLeaderId;
 import org.ywb.raft.core.support.NodeContext;
+import org.ywb.raft.core.statemachine.StateMachine;
 import org.ywb.raft.core.support.role.AbstractNodeRole;
 
 /**
@@ -29,4 +31,31 @@ public interface Node extends NodeExecutor, NodeTask {
      * @param nodeRole role
      */
     void changeToRole(AbstractNodeRole nodeRole);
+
+    /**
+     * 注册状态机
+     *
+     * @param stateMachine 状态机
+     */
+    void registerStateMachine(StateMachine stateMachine);
+
+
+    /**
+     * 追加日志
+     *
+     * @param commandBytes log bytes
+     */
+    void appendLog(byte[] commandBytes);
+
+    /**
+     * 通知从节点追加日志
+     */
+    void doReplicateLog();
+
+    /**
+     * 获取role name 和leader node id
+     *
+     * @return {@link RoleNameAndLeaderId}
+     */
+    RoleNameAndLeaderId getRoleNameAndLeaderId();
 }

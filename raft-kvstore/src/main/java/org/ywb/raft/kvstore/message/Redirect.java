@@ -2,6 +2,7 @@ package org.ywb.raft.kvstore.message;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.ywb.raft.core.support.meta.NodeId;
 
 /**
  * @author yuwenbo1
@@ -18,4 +19,7 @@ public class Redirect {
         this.leaderId = leaderId;
     }
 
+    public Redirect(NodeId leaderNodeId) {
+        this(leaderNodeId != null ? leaderNodeId.getVal() : null);
+    }
 }

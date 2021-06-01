@@ -2,6 +2,7 @@ package org.ywb.raft.core.support.role;
 
 import lombok.Getter;
 import org.ywb.raft.core.enums.RoleName;
+import org.ywb.raft.core.node.support.RoleNameAndLeaderId;
 import org.ywb.raft.core.support.meta.NodeId;
 
 /**
@@ -26,4 +27,9 @@ public abstract class AbstractNodeRole {
      */
     public abstract void cancelTimeoutOrTask();
 
+    public RoleNameAndLeaderId getNameAndLeaderId(NodeId selfId) {
+        return new RoleNameAndLeaderId(name,getLeaderId());
+    }
+
+    protected abstract NodeId getLeaderId();
 }

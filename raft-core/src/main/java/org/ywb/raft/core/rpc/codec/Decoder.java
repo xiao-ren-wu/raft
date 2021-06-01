@@ -30,7 +30,7 @@ public class Decoder extends ByteToMessageDecoder {
             return;
         }
         int magic = in.readInt();
-        Assert.isTrue(MAGIC - magic == 0, () -> new MagicCodeErrorException(magic));
+        Assert.isTrue(RAFT_MAGIC - magic == 0, () -> new MagicCodeErrorException(magic));
         // skip version
         in.skipBytes(4);
         // msg type

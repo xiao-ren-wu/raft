@@ -1,15 +1,25 @@
 package org.ywb.raft.core.node;
 
+import com.google.common.util.concurrent.FutureCallback;
 import lombok.extern.slf4j.Slf4j;
 import org.ywb.raft.core.enums.RoleName;
+import org.ywb.raft.core.exceptions.NotLeaderException;
 import org.ywb.raft.core.log.entry.EntryMeta;
+import org.ywb.raft.core.node.support.RoleNameAndLeaderId;
+import org.ywb.raft.core.rpc.msg.AppendEntriesRpc;
+import org.ywb.raft.core.rpc.msg.RequestVoteRpc;
 import org.ywb.raft.core.schedule.task.ElectionTimeoutTask;
 import org.ywb.raft.core.support.NodeContext;
-import org.ywb.raft.core.rpc.msg.*;
+import org.ywb.raft.core.statemachine.StateMachine;
+import org.ywb.raft.core.support.meta.GroupMember;
+import org.ywb.raft.core.support.meta.NodeEndpoint;
 import org.ywb.raft.core.support.role.AbstractNodeRole;
 import org.ywb.raft.core.support.role.CandidateNodeRole;
 import org.ywb.raft.core.support.role.FollowerNodeRole;
 import org.ywb.raft.core.utils.Assert;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yuwenbo1
@@ -33,6 +43,8 @@ public class NodeImpl implements Node {
      * 当前角色以及信息
      */
     private AbstractNodeRole role;
+
+    private StateMachine stateMachine;
 
     public NodeImpl(NodeContext context) {
         this.context = context;
@@ -88,9 +100,61 @@ public class NodeImpl implements Node {
     }
 
     @Override
+    public void registerStateMachine(StateMachine stateMachine) {
+        this.stateMachine = stateMachine;
+    }
+
+    @Override
+    public void appendLog(byte[] commandBytes) {
+        Assert.nonNull(commandBytes);
+        ensureLeader();
+        context.getTaskExecutor()
+                .submit(() -> {
+                    context.getLog().appendEntry(role.getTerm(), commandBytes);
+                    doReplicateLog();
+                });
+    }
+
+    @Override
+    public void doReplicateLog() {
+        log.debug("replicate log");
+        int nextIndex = context.getLog().getNextIndex();
+        EntryMeta lastEntryMeta = context.getLog().getLastEntryMeta();
+        int index = lastEntryMeta.getIndex();
+        int maxEntries = index - nextIndex;
+        context.getNodeGroup()
+                .listReplicationTarget()
+                .forEach(groupMember -> doReplicateLogCore(groupMember, maxEntries));
+    }
+
+    @Override
+    public RoleNameAndLeaderId getRoleNameAndLeaderId() {
+        return role.getNameAndLeaderId(context.getSelfId());
+    }
+
+    private void doReplicateLogCore(GroupMember member, int maxEntries) {
+        AppendEntriesRpc appendEntriesRpc = AppendEntriesRpc.builder()
+                .term(this.getRole().getTerm())
+                .leaderId(context.getSelfId())
+                .prevLogIndex(member.getNextIndex())
+                .leaderCommit(maxEntries)
+                .build();
+        context.getConnector().sendAppendEntries(appendEntriesRpc, member.getEndpoint());
+    }
+
+    private void ensureLeader() {
+        RoleNameAndLeaderId result = role.getNameAndLeaderId(context.getSelfId());
+        if (result.getRoleName() == RoleName.LEADER) {
+            return;
+        }
+        NodeEndpoint endpoint = result.getLeaderNodeId() != null ? context.getNodeGroup().findGroupMember(result.getLeaderNodeId()).getEndpoint() : null;
+        throw new NotLeaderException(result.getRoleName(), endpoint);
+    }
+
+    @Override
     public ElectionTimeoutTask scheduleElectionTimeout() {
         return context.getScheduler().scheduleElectionTimeoutTask(
-                ()-> context.getTaskExecutor().submit(this::doProcessElectionTimeout)
+                () -> context.getTaskExecutor().submit(this::doProcessElectionTimeout)
         );
     }
 
@@ -124,4 +188,15 @@ public class NodeImpl implements Node {
                 .build();
         context.getConnector().sendRequestVote(requestVoteRpc, context.getNodeGroup().listEndpointExceptSelf());
     }
+
+    private static final FutureCallback<Object> LOGGING_FUTURE_CALLBACK = new FutureCallback<Object>() {
+        @Override
+        public void onSuccess(@Nullable Object result) {
+        }
+
+        @Override
+        public void onFailure(@Nonnull Throwable t) {
+            log.warn("failure", t);
+        }
+    };
 }
