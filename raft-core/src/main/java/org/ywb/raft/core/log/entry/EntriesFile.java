@@ -13,6 +13,13 @@ import java.util.Objects;
  * @author yuwenbo1
  * @date 2021/4/25 9:27 下午 星期日
  * @since 1.0.0
+ * 日志文件条目磁盘存储格式
+ *
+ * <pre>
+ * +-------------+--------------+-------------+-------------------+----------------+
+ * | kind(int32) | index(int32) | term(int32) | payloadLen(int32) | payload(bytes) |
+ * +-------------+--------------+-------------+-------------------+----------------+
+ * </pre>
  */
 public class EntriesFile {
 

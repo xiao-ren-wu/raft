@@ -15,6 +15,7 @@ import java.util.Map;
  * @author yuwenbo1
  * @date 2021/4/25 10:19 下午 星期日
  * @since 1.0.0
+ *
  * 日志索引文件结构
  */
 public class EntryIndexFile implements Iterable<EntryIndexItem> {

@@ -22,11 +22,16 @@ public class FileLog extends AbstractLog {
             |-log-1
             |   |-entries.bin
             |   |-entries.idx
+            |-log-2
+            |   |-entries.bin
+            |   |-entries.idx
+
+             ...
+
             |
             |-log-100
                 |-entries.bin
                 |-entries.idx
-
      */
 
     /**

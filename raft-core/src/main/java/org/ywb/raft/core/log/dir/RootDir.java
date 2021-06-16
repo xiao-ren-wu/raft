@@ -11,6 +11,23 @@ import java.util.stream.Stream;
  * @author yuwenbo1
  * @date 2021/4/27 7:52 上午 星期二
  * @since 1.0.0
+ * raft文件路径模式
+ * <p>
+ * /${rootDir}
+ *  |-log-1
+ *  |   |-entries.bin
+ *  |   |-entries.idx
+ *  |-log-2
+ *  |   |-entries.bin
+ *  |   |-entries.idx
+ *  |-log-3
+ *  |   |-entries.bin
+ *  |   |-entries.idx
+ *  ...
+ *  |-log-n
+ *  |   |-entries.bin
+ *  |   |-entries.idx
+ * </p>
  */
 public class RootDir {
 
@@ -25,7 +42,7 @@ public class RootDir {
     public LogGeneration getLatestGeneration() {
         Assert.isTrue(Objects.nonNull(rootDir) && rootDir.isDirectory(), () -> new IllegalArgumentException("rootDir is Illegal " + rootDir));
         File[] files = rootDir.listFiles(File::isDirectory);
-        if (Objects.isNull(files)||files.length==0) {
+        if (Objects.isNull(files) || files.length == 0) {
             return null;
         }
         File file = Stream.of(files)
@@ -52,6 +69,4 @@ public class RootDir {
         firstLogGeneration.initialize();
         return firstLogGeneration;
     }
-
-
 }
