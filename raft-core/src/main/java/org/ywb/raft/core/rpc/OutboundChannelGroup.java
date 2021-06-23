@@ -35,7 +35,7 @@ public class OutboundChannelGroup {
 
     private final NodeId selfNodeId;
 
-    private final ConcurrentMap<NodeId, Future<NioChannel>> channelMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<NodeId, Future<NettyRaftChannel>> channelMap = new ConcurrentHashMap<>();
 
     public OutboundChannelGroup(EventLoopGroup workerGroup, EventBus eventBus, NodeId selfNodeId) {
         this.workerGroup = workerGroup;
@@ -43,10 +43,10 @@ public class OutboundChannelGroup {
         this.selfNodeId = selfNodeId;
     }
 
-    public NioChannel getOrConnect(NodeId nodeId, Address address) {
-        Future<NioChannel> future = channelMap.get(nodeId);
+    public NettyRaftChannel getOrConnect(NodeId nodeId, Address address) {
+        Future<NettyRaftChannel> future = channelMap.get(nodeId);
         if (Objects.isNull(future)) {
-            FutureTask<NioChannel> newFuture = new FutureTask<>(() -> connect(nodeId, address));
+            FutureTask<NettyRaftChannel> newFuture = new FutureTask<>(() -> connect(nodeId, address));
             future = channelMap.putIfAbsent(nodeId, newFuture);
             if (Objects.isNull(future)) {
                 future = newFuture;
@@ -67,7 +67,7 @@ public class OutboundChannelGroup {
         }
     }
 
-    private NioChannel connect(NodeId nodeId, Address address) throws InterruptedException {
+    private NettyRaftChannel connect(NodeId nodeId, Address address) throws InterruptedException {
         Bootstrap bootstrap = new Bootstrap()
                 .group(workerGroup)
                 .channel(NioSocketChannel.class)
@@ -93,7 +93,7 @@ public class OutboundChannelGroup {
                     log.debug("channel OUTBOUND-{} disconnected", nodeId);
                     channelMap.remove(nodeId);
                 });
-        return new NioChannel(nettyChannel);
+        return new NettyRaftChannel(nettyChannel);
     }
 
     public void closeAll() {

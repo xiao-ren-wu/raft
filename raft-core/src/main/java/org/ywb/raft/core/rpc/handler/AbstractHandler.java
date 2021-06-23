@@ -5,7 +5,7 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import lombok.extern.slf4j.Slf4j;
-import org.ywb.raft.core.rpc.NioChannel;
+import org.ywb.raft.core.rpc.NettyRaftChannel;
 import org.ywb.raft.core.rpc.msg.*;
 import org.ywb.raft.core.support.meta.NodeId;
 import org.ywb.raft.core.utils.Assert;
@@ -28,7 +28,7 @@ public abstract class AbstractHandler extends ChannelDuplexHandler {
      */
     NodeId remoteId;
 
-    protected NioChannel channel;
+    protected NettyRaftChannel channel;
 
     private AppendEntriesRpc lastAppendEntiresRpc;
 

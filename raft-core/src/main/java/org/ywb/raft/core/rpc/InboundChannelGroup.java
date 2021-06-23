@@ -14,9 +14,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Slf4j
 public class InboundChannelGroup {
 
-    private final List<NioChannel> channels = new CopyOnWriteArrayList<>();
+    private final List<NettyRaftChannel> channels = new CopyOnWriteArrayList<>();
 
-    public void add(NodeId remoteId, NioChannel channel) {
+    public void add(NodeId remoteId, NettyRaftChannel channel) {
         log.debug("channel INBOUND-{} connected", remoteId);
         channel.getDelegate()
                 .closeFuture()
@@ -26,13 +26,13 @@ public class InboundChannelGroup {
                 });
     }
 
-    private void remove(NioChannel channel) {
+    private void remove(NettyRaftChannel channel) {
         channels.remove(channel);
     }
 
     public void closeAll() {
         log.debug("close all inbound channels");
-        channels.forEach(NioChannel::close);
+        channels.forEach(NettyRaftChannel::close);
     }
 
 }

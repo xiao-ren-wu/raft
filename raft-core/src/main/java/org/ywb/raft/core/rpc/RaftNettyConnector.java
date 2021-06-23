@@ -116,7 +116,7 @@ public class RaftNettyConnector implements Connector {
         }
     }
 
-    private Channel getChannel(NodeEndpoint endpoint) {
+    private RaftChannel getChannel(NodeEndpoint endpoint) {
         return outBoundChannelGroup.getOrConnect(endpoint.getNodeId(), endpoint.getAddress());
     }
 }

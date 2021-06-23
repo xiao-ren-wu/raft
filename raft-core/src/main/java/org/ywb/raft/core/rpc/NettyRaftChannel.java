@@ -1,5 +1,6 @@
 package org.ywb.raft.core.rpc;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
 import org.ywb.raft.core.rpc.msg.AppendEntriesResult;
 import org.ywb.raft.core.rpc.msg.AppendEntriesRpc;
@@ -13,11 +14,11 @@ import javax.annotation.Nonnull;
  * @date 2021/5/11 7:58 上午 星期二
  * @since 1.0.0
  */
-public class NioChannel implements Channel {
+public class NettyRaftChannel implements RaftChannel {
 
-    private final io.netty.channel.Channel nettyChannel;
+    private final Channel nettyChannel;
 
-    public NioChannel(io.netty.channel.Channel nettyChannel) {
+    public NettyRaftChannel(io.netty.channel.Channel nettyChannel) {
         this.nettyChannel = nettyChannel;
     }
 
@@ -46,11 +47,11 @@ public class NioChannel implements Channel {
         try {
             nettyChannel.close().sync();
         } catch (InterruptedException e) {
-            throw new ChannelException("fail to close channel", e);
+            throw new ChannelException("fail to close netty channel", e);
         }
     }
 
-    public io.netty.channel.Channel getDelegate() {
+    public Channel getDelegate() {
         return nettyChannel;
     }
 }

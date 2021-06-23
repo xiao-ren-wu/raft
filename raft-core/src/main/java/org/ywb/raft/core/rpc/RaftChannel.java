@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
  * @date 2021/5/11 8:04 上午 星期二
  * @since 1.0.0
  */
-public interface Channel {
+public interface RaftChannel {
     /**
      * Write request vote rpc.
      *

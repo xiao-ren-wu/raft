@@ -3,7 +3,7 @@ package org.ywb.raft.core.rpc.handler;
 import com.google.common.eventbus.EventBus;
 import io.netty.channel.ChannelHandlerContext;
 import org.ywb.raft.core.rpc.InboundChannelGroup;
-import org.ywb.raft.core.rpc.NioChannel;
+import org.ywb.raft.core.rpc.NettyRaftChannel;
 import org.ywb.raft.core.support.meta.NodeId;
 
 /**
@@ -24,7 +24,7 @@ public class FromRemoteHandler extends AbstractHandler {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof NodeId) {
             super.remoteId = (NodeId) msg;
-            super.channel = new NioChannel(ctx.channel());
+            super.channel = new NettyRaftChannel(ctx.channel());
             channelGroup.add(remoteId, channel);
             return;
         }
