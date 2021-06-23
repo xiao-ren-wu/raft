@@ -28,8 +28,8 @@ public abstract class AbstractNodeRole {
     public abstract void cancelTimeoutOrTask();
 
     public RoleNameAndLeaderId getNameAndLeaderId(NodeId selfId) {
-        return new RoleNameAndLeaderId(name,getLeaderId());
+        return new RoleNameAndLeaderId(name,getLeaderId(selfId));
     }
 
-    protected abstract NodeId getLeaderId();
+    public abstract NodeId getLeaderId(NodeId selfId);
 }

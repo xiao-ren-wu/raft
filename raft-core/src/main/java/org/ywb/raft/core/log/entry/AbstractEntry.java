@@ -1,5 +1,6 @@
 package org.ywb.raft.core.log.entry;
 
+
 import lombok.Getter;
 
 /**

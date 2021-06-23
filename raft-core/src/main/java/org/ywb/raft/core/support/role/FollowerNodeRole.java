@@ -35,6 +35,7 @@ public class FollowerNodeRole extends AbstractNodeRole {
      * @param nodeId nodeId
      * @return leader Node id
      */
+    @Override
     public NodeId getLeaderId(NodeId nodeId) {
         return leaderId;
     }

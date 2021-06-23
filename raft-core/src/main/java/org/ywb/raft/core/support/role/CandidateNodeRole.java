@@ -40,7 +40,8 @@ public class CandidateNodeRole extends AbstractNodeRole {
     }
 
     @Override
-    protected NodeId getLeaderId() {
+    public NodeId getLeaderId(NodeId selfId) {
         return null;
     }
+
 }

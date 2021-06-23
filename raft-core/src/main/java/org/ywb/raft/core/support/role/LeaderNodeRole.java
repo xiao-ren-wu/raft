@@ -3,6 +3,7 @@ package org.ywb.raft.core.support.role;
 import lombok.ToString;
 import org.ywb.raft.core.enums.RoleName;
 import org.ywb.raft.core.schedule.task.LogReplicationTask;
+import org.ywb.raft.core.support.meta.NodeId;
 
 /**
  * @author yuwenbo1
@@ -26,4 +27,10 @@ public class LeaderNodeRole extends AbstractNodeRole {
     public void cancelTimeoutOrTask() {
         logReplicationTask.cancel();
     }
+
+    @Override
+    public NodeId getLeaderId(NodeId selfId) {
+        return selfId;
+    }
+
 }
