@@ -10,7 +10,6 @@
     <modules>
         <module>raft-core</module>
         <module>raft-kvstore</module>
-        <module>raft-commandline-client</module>
     </modules>
     <packaging>pom</packaging>
 
