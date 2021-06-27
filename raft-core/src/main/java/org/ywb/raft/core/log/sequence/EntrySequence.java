@@ -35,7 +35,7 @@ public interface EntrySequence {
     int getLastLogIndex();
 
     /**
-     * 获取吓一跳日志索引
+     * 获取下一跳日志索引
      *
      * @return next log index
      */

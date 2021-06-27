@@ -1,7 +1,11 @@
 package org.ywb.raft.core.log;
 
+import com.google.common.eventbus.EventBus;
 import lombok.extern.slf4j.Slf4j;
-import org.ywb.raft.core.log.entry.*;
+import org.ywb.raft.core.log.entry.Entry;
+import org.ywb.raft.core.log.entry.EntryMeta;
+import org.ywb.raft.core.log.entry.GeneralEntry;
+import org.ywb.raft.core.log.entry.NoOpEntry;
 import org.ywb.raft.core.log.sequence.EntrySequence;
 import org.ywb.raft.core.rpc.msg.AppendEntriesRpc;
 import org.ywb.raft.core.support.meta.NodeId;
@@ -21,7 +25,13 @@ import java.util.Objects;
 @Slf4j
 public abstract class AbstractLog implements Log {
 
+    private EventBus eventBus;
+
     protected EntrySequence entrySequence;
+
+    public AbstractLog(EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
 
     @Override
     public EntryMeta getLastEntryMeta() {

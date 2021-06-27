@@ -1,5 +1,6 @@
 package org.ywb.raft.core.log;
 
+import com.google.common.eventbus.EventBus;
 import org.ywb.raft.core.log.dir.LogGeneration;
 import org.ywb.raft.core.log.dir.RootDir;
 import org.ywb.raft.core.log.sequence.FileEntrySequence;
@@ -39,7 +40,8 @@ public class FileLog extends AbstractLog {
      */
     private final RootDir rootDir;
 
-    public FileLog(File baseDir) {
+    public FileLog(File baseDir, EventBus eventBus) {
+        super(eventBus);
         rootDir = new RootDir(baseDir);
         LogGeneration latestGeneration = rootDir.getLatestGeneration();
         if (latestGeneration != null) {

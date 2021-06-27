@@ -107,9 +107,8 @@ public class NodeImpl implements Node {
     @Override
     public void appendLog(byte[] commandBytes) {
         Assert.nonNull(commandBytes);
-        ensureLeader();
-        context.getTaskExecutor()
-                .submit(() -> {
+        assertLeader();
+        context.getTaskExecutor().submit(() -> {
                     context.getLog().appendEntry(role.getTerm(), commandBytes);
                     doReplicateLog();
                 });
@@ -142,7 +141,7 @@ public class NodeImpl implements Node {
         context.getConnector().sendAppendEntries(appendEntriesRpc, member.getEndpoint());
     }
 
-    private void ensureLeader() {
+    private void assertLeader() {
         RoleNameAndLeaderId result = role.getNameAndLeaderId(context.getSelfId());
         if (result.getRoleName() == RoleName.LEADER) {
             return;

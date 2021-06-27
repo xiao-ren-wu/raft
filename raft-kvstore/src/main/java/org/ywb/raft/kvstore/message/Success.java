@@ -7,6 +7,7 @@ package org.ywb.raft.kvstore.message;
  * @since 1.0.0
  */
 public class Success {
+
     private Success() {
     }
 

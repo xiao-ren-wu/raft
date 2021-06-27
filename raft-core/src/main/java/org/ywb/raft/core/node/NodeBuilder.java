@@ -1,6 +1,8 @@
 package org.ywb.raft.core.node;
 
 import com.google.common.eventbus.EventBus;
+import org.ywb.raft.core.eventbus.OnReceiveSubScribeImpl;
+import org.ywb.raft.core.log.FileLog;
 import org.ywb.raft.core.log.Log;
 import org.ywb.raft.core.log.MemoryLog;
 import org.ywb.raft.core.rpc.Connector;
@@ -13,6 +15,8 @@ import org.ywb.raft.core.support.meta.NodeEndpoint;
 import org.ywb.raft.core.support.meta.NodeGroup;
 import org.ywb.raft.core.support.meta.NodeId;
 
+import javax.annotation.Nullable;
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -37,6 +41,8 @@ public class NodeBuilder {
     private Connector connector;
 
     private Log log;
+
+    private FileNodeStore fileNodeStore;
 
     private TaskExecutor taskExecutor = null;
 
@@ -75,7 +81,9 @@ public class NodeBuilder {
     }
 
     public Node build() {
-        return new NodeImpl(buildContext());
+        NodeImpl node = new NodeImpl(buildContext());
+        new OnReceiveSubScribeImpl(node);
+        return node;
     }
 
     private NodeContext buildContext() {
@@ -89,5 +97,18 @@ public class NodeBuilder {
         context.setScheduler(scheduler != null ? scheduler : new DefaultScheduler(5000, 10000, 500, 1000));
         context.setTaskExecutor(taskExecutor != null ? taskExecutor : new SingleThreadTaskExecutor("node"));
         return context;
+    }
+
+    public NodeBuilder setDataDir(@Nullable String dataDirPath) {
+        if (dataDirPath == null || dataDirPath.isEmpty()) {
+            return this;
+        }
+        File dataDir = new File(dataDirPath);
+        if (!dataDir.isDirectory() || !dataDir.exists()) {
+            throw new IllegalArgumentException("[" + dataDirPath + "] not a directory, or not exists");
+        }
+        log = new FileLog(dataDir, eventBus);
+        fileNodeStore = new FileNodeStore(new File(dataDir, FileNodeStore.FILE_NAME));
+        return this;
     }
 }

@@ -1,7 +1,9 @@
 package org.ywb.raft.core.support.meta;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * @author yuwenbo1
@@ -10,6 +12,8 @@ import lombok.Getter;
  * 节点元数据
  */
 @Getter
+@ToString
+@EqualsAndHashCode
 @AllArgsConstructor
 public class NodeEndpoint {
 

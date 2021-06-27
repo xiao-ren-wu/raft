@@ -25,7 +25,7 @@ import java.util.Objects;
  */
 public class FileNodeStore implements NodeStore {
 
-    private static final String FILE_NAME = "node.bin";
+    public static final String FILE_NAME = "node.bin";
 
     private static final long OFFSET_TERM = 0;
 

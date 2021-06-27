@@ -38,6 +38,7 @@ public class Service {
 
     public void set(CommandRequest<SetCommand> commandRequest) {
         Redirect redirect = checkLeadership();
+        // todo 选举中，选中的节点为Candidate时，服务不可用!!!
         if (redirect != null) {
             commandRequest.reply(redirect);
             return;
