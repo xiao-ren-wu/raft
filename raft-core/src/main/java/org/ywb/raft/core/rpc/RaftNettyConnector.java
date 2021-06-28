@@ -75,9 +75,14 @@ public class RaftNettyConnector implements Connector {
                                 .addLast(new FromRemoteHandler(eventBus, inboundChannelGroup));
                     }
                 });
-        log.debug("node listen on port {}", port);
         try {
-            serverBootstrap.bind(port).sync();
+            serverBootstrap.bind(port).sync().addListener(future -> {
+                if (future.isSuccess()) {
+                    log.debug("node listen on port {}", port);
+                } else {
+                    log.error(future.cause().getMessage());
+                }
+            });
         } catch (InterruptedException e) {
             throw new ConnectorException("failed to bind port", e);
         }

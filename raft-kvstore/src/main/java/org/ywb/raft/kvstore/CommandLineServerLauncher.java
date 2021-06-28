@@ -7,8 +7,10 @@ import org.ywb.raft.core.node.Node;
 import org.ywb.raft.core.node.NodeBuilder;
 import org.ywb.raft.core.support.meta.NodeEndpoint;
 import org.ywb.raft.core.support.meta.NodeId;
+import org.ywb.raft.kvstore.support.AllOptionals;
 
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,6 +81,7 @@ public class CommandLineServerLauncher {
     private void startServer(Server server) throws Exception {
         this.server = server;
         this.server.start();
+        new CountDownLatch(1).await();
         Runtime.getRuntime()
                 .addShutdownHook(new Thread(this::stopServer, "shutdown"));
     }
@@ -87,7 +90,7 @@ public class CommandLineServerLauncher {
         try {
             this.server.close();
         } catch (Exception e) {
-            System.err.println(Throwables.getStackTraceAsString(e));
+            log.error(Throwables.getStackTraceAsString(e));
         }
     }
 

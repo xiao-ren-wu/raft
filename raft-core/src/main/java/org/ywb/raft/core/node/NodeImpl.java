@@ -175,9 +175,7 @@ public class NodeImpl implements Node {
         log.info("started election");
         // 变成candidate角色
         changeToRole(new CandidateNodeRole(newTerm, scheduleElectionTimeout()));
-
         EntryMeta lastEntryMeta = context.getLog().getLastEntryMeta();
-
         // 发送requestVote消息
         RequestVoteRpc requestVoteRpc = RequestVoteRpc.builder()
                 .term(newTerm)

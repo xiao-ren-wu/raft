@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.ywb.raft.core.utils.Assert;
+import sun.rmi.transport.Channel;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -93,6 +94,10 @@ public class NodeGroup {
         log.debug("match indices {}", matchIndices);
         // 取排序后中间位置的matchIndex
         return matchIndices.get(count / 2).getMatchIndex();
+    }
+
+    public GroupMember findSelf() {
+        return findGroupMember(selfNodeId);
     }
 
     @Getter

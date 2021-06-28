@@ -1,11 +1,13 @@
 package org.ywb.raft.core.node;
 
+import com.google.common.base.Preconditions;
 import com.google.common.eventbus.EventBus;
+import io.netty.channel.nio.NioEventLoopGroup;
 import org.ywb.raft.core.eventbus.OnReceiveSubScribeImpl;
 import org.ywb.raft.core.log.FileLog;
 import org.ywb.raft.core.log.Log;
-import org.ywb.raft.core.log.MemoryLog;
 import org.ywb.raft.core.rpc.Connector;
+import org.ywb.raft.core.rpc.RaftNettyConnector;
 import org.ywb.raft.core.schedule.DefaultScheduler;
 import org.ywb.raft.core.schedule.Scheduler;
 import org.ywb.raft.core.support.NodeContext;
@@ -15,11 +17,11 @@ import org.ywb.raft.core.support.meta.NodeEndpoint;
 import org.ywb.raft.core.support.meta.NodeGroup;
 import org.ywb.raft.core.support.meta.NodeId;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 
 /**
  * @author yuwenbo1
@@ -46,6 +48,9 @@ public class NodeBuilder {
 
     private TaskExecutor taskExecutor = null;
 
+    private NioEventLoopGroup workerNioEventLoopGroup = new NioEventLoopGroup();
+
+
     public NodeBuilder(NodeEndpoint endpoint) {
         this(Collections.singletonList(endpoint), endpoint.getNodeId());
     }
@@ -71,6 +76,12 @@ public class NodeBuilder {
         return this;
     }
 
+    public NodeBuilder setWorkerNioEventLoopGroup(@Nonnull NioEventLoopGroup workerNioEventLoopGroup) {
+        Preconditions.checkNotNull(workerNioEventLoopGroup);
+        this.workerNioEventLoopGroup = workerNioEventLoopGroup;
+        return this;
+    }
+
     public NodeBuilder setLog(Log log) {
         this.log = log;
         return this;
@@ -90,9 +101,9 @@ public class NodeBuilder {
         NodeContext context = new NodeContext();
         context.setNodeGroup(group);
         context.setSelfId(selfId);
+        context.setLog(log);
         context.setEventBus(eventBus);
-        context.setConnector(connector);
-        context.setLog(Objects.isNull(log) ? new MemoryLog() : log);
+        context.setConnector(connector != null ? connector : createNioConnector());
         context.setNodeStore(nodeStore != null ? nodeStore : new FileNodeStore());
         context.setScheduler(scheduler != null ? scheduler : new DefaultScheduler(5000, 10000, 500, 1000));
         context.setTaskExecutor(taskExecutor != null ? taskExecutor : new SingleThreadTaskExecutor("node"));
@@ -100,9 +111,6 @@ public class NodeBuilder {
     }
 
     public NodeBuilder setDataDir(@Nullable String dataDirPath) {
-        if (dataDirPath == null || dataDirPath.isEmpty()) {
-            return this;
-        }
         File dataDir = new File(dataDirPath);
         if (!dataDir.isDirectory() || !dataDir.exists()) {
             throw new IllegalArgumentException("[" + dataDirPath + "] not a directory, or not exists");
@@ -110,5 +118,11 @@ public class NodeBuilder {
         log = new FileLog(dataDir, eventBus);
         fileNodeStore = new FileNodeStore(new File(dataDir, FileNodeStore.FILE_NAME));
         return this;
+    }
+
+    @Nonnull
+    private RaftNettyConnector createNioConnector() {
+        int port = group.findSelf().getEndpoint().getAddress().getPort();
+        return new RaftNettyConnector(workerNioEventLoopGroup, true, selfId, eventBus, port);
     }
 }

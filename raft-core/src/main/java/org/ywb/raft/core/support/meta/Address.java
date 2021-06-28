@@ -2,6 +2,7 @@ package org.ywb.raft.core.support.meta;
 
 import com.google.common.base.Preconditions;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * @author yuwenbo1
@@ -10,6 +11,7 @@ import lombok.Getter;
  * 用于记录每个节点的IP和PORT
  */
 @Getter
+@ToString
 public class Address {
 
     private final String host;

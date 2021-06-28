@@ -53,8 +53,13 @@ public class Server implements Closeable {
                                 .addLast(new ServiceHandler(service));
                     }
                 });
-        log.info("server started at port {}", this.port);
-        serverBootstrap.bind(port);
+        serverBootstrap.bind(port).addListener(future -> {
+            if (future.isSuccess()) {
+                log.info("server started at port {} success", this.port);
+            } else {
+                log.error(future.cause().getMessage());
+            }
+        });
     }
 
 

@@ -1,4 +1,4 @@
-package org.ywb.raft.kvstore;
+package org.ywb.raft.kvstore.support;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -33,7 +33,7 @@ public class AllOptionals {
                 Option.builder("h")
                         .hasArg()
                         .argName("host")
-                        .desc("host, required when status with standalone or standby mode")
+                        .desc("host, required when start with standalone or standby mode")
                         .build()
         );
         options.addOption(
@@ -64,7 +64,7 @@ public class AllOptionals {
         );
         options.addOption(
                 Option.builder("gc")
-                        .hasArg()
+                        .hasArgs()
                         .argName("node-endpoint")
                         .desc("group config, required when starts with group-number mode. format:<node-group> <node-endpoint>..., format of node-endpoint: " +
                                 "<node-id>,<host>,<port-raft-node>, eg: A,localhost,8000,B,localhost,8010")

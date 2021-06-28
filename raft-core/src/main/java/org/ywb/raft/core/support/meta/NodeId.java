@@ -3,6 +3,7 @@ package org.ywb.raft.core.support.meta;
 import com.google.common.base.Preconditions;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * @author yuwenbo1
@@ -11,6 +12,7 @@ import lombok.Getter;
  * 节点信息
  */
 @Getter
+@ToString
 @EqualsAndHashCode
 public class NodeId {
 

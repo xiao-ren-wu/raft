@@ -1,5 +1,6 @@
 package org.ywb.raft.core.log;
 
+import com.google.common.eventbus.EventBus;
 import org.ywb.raft.core.log.sequence.MemoryEntrySequence;
 
 /**
@@ -9,11 +10,8 @@ import org.ywb.raft.core.log.sequence.MemoryEntrySequence;
  */
 public class MemoryLog extends AbstractLog {
 
-    public MemoryLog() {
-        this(new MemoryEntrySequence());
-    }
-
-    public MemoryLog(MemoryEntrySequence memoryEntrySequence) {
+    public MemoryLog(MemoryEntrySequence memoryEntrySequence, EventBus eventBus) {
+        super(eventBus);
         this.entrySequence = memoryEntrySequence;
     }
 }
