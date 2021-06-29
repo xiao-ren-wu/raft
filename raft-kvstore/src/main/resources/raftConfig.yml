@@ -1,0 +1,9 @@
+raft:
+  groupMember:
+    A: localhost:2333
+    B: localhost:2334
+    C: localhost:2335
+  nodeId: A
+  servicePort: 8080
+  dataDir: /Users/yuwenbo/IdeaProjects/raft/raft-kvstore/target/data
+  mode: group-member

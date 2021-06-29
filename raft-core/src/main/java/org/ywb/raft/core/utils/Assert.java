@@ -23,7 +23,19 @@ public abstract class Assert {
 
     public static void nonNull(Object o) {
         if (o == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public static void nonNull(Object obj, String errMsg) {
+        if (obj == null) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    public static void hasText(String text, String errMsg) {
+        if (text == null || text.isEmpty()) {
+            throw new IllegalArgumentException(errMsg);
         }
     }
 }

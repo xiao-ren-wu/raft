@@ -7,6 +7,6 @@ package org.ywb.raft.kvstore;
  */
 public class RaftKvApplication {
     public static void main(String[] args) {
-        new CommandLineServerLauncher().start(args);
+        new CommandLineServerLauncher().start();
     }
 }

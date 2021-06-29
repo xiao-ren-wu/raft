@@ -22,8 +22,6 @@ class CommandLineServerLauncherTest {
                 "-d",
                 "/Users/yuwenbo/IdeaProjects/raft/raft-kvstore/target/raft3/"
         };
-        new CommandLineServerLauncher().start(args);
+        new CommandLineServerLauncher().start();
     }
-
-
 }
