@@ -16,9 +16,9 @@ import org.ywb.raft.core.support.TaskExecutor;
 import org.ywb.raft.core.support.meta.NodeEndpoint;
 import org.ywb.raft.core.support.meta.NodeGroup;
 import org.ywb.raft.core.support.meta.NodeId;
+import org.ywb.raft.core.utils.ClassPathUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
@@ -110,11 +110,12 @@ public class NodeBuilder {
         return context;
     }
 
-    public NodeBuilder setDataDir(@Nullable String dataDirPath) {
-        File dataDir = new File(dataDirPath);
-        if (!dataDir.isDirectory() || !dataDir.exists()) {
-            throw new IllegalArgumentException("[" + dataDirPath + "] not a directory, or not exists");
+    public NodeBuilder setDataDir(String dataDirPath) {
+        if (dataDirPath == null || "".equals(dataDirPath)) {
+            // use classpath
+            dataDirPath = String.format("%s/%s", ClassPathUtils.getClassPath(), selfId.getVal());
         }
+        File dataDir = new File(dataDirPath);
         log = new FileLog(dataDir, eventBus);
         fileNodeStore = new FileNodeStore(new File(dataDir, FileNodeStore.FILE_NAME));
         return this;
@@ -125,4 +126,6 @@ public class NodeBuilder {
         int port = group.findSelf().getEndpoint().getAddress().getPort();
         return new RaftNettyConnector(workerNioEventLoopGroup, true, selfId, eventBus, port);
     }
+
+
 }

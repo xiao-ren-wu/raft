@@ -152,14 +152,18 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
         if (currentVotesCount > countOfMajor / 2) {
             // 票数过半成为leader
             log.info("become leader,term {}", node.getRole().getTerm());
-            // resetReplicationStates();
+            resetReplicationStates();
             node.changeToRole(new LeaderNodeRole(node.getRole().getTerm(), scheduleLogReplicationTask()));
             // no-op log
-            // context.log().appendEntry(role.getTerm());
+             context.getLog().appendEntry(node.getRole().getTerm());
         } else {
             // 修改收到的投票数，并重新创建选举超时定时器
             node.changeToRole(new CandidateNodeRole(node.getRole().getTerm(), currentVotesCount, node.scheduleElectionTimeout()));
         }
+    }
+
+    private void resetReplicationStates() {
+        context.getNodeGroup().resetReplicatingStates(context.getLog().getNextIndex());
     }
 
     private LogReplicationTask scheduleLogReplicationTask() {
@@ -174,8 +178,6 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
 ///    private void replicateLog() {
 //        context.getTaskExecutor().submit(this::doReplicateLog);
 //    }
-
-
 
     private AppendEntriesResult doProcessEntriesRpc(AppendEntriesRpcMessage rpcMessage) {
         AppendEntriesRpc rpc = rpcMessage.get();

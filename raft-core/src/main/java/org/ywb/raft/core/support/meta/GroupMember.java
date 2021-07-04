@@ -2,6 +2,7 @@ package org.ywb.raft.core.support.meta;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.ywb.raft.core.support.ReplicatingState;
 import org.ywb.raft.core.utils.Assert;
 
@@ -12,6 +13,7 @@ import org.ywb.raft.core.utils.Assert;
  * 集群成员信息
  */
 @Getter
+@ToString
 public class GroupMember {
 
     /**
@@ -22,17 +24,17 @@ public class GroupMember {
     /**
      * 日志复制进度
      */
-    private final ReplicatingState replicatingState;
+    @Setter
+    private ReplicatingState replicatingState;
 
     @Setter
-    @Getter
     private boolean major;
 
     @Setter
-    @Getter
     private boolean removing = false;
 
     public GroupMember(NodeEndpoint endpoint) {
+        // init replicating state
         this(endpoint, null);
     }
 
@@ -50,7 +52,7 @@ public class GroupMember {
     }
 
     public ReplicatingState ensureReplicatingState() {
-        Assert.isTrue(replicatingState == null, () -> new IllegalStateException("replication state not set"));
+        Assert.isTrue(replicatingState != null, () -> new IllegalStateException("replication state not set"));
         return replicatingState;
     }
 

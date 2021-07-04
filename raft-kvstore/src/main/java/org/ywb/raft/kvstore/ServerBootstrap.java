@@ -9,7 +9,6 @@ import org.ywb.raft.core.support.meta.NodeId;
 import org.ywb.raft.core.utils.Assert;
 import org.ywb.raft.kvstore.config.RaftConfig;
 import org.ywb.raft.kvstore.config.ServerConfig;
-import org.ywb.raft.kvstore.support.YamlConfigUtils;
 
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -22,12 +21,11 @@ import static org.ywb.raft.kvstore.support.KVConstants.RAFT_MODE.*;
  * @since 1.0.0
  */
 @Slf4j
-public class CommandLineServerLauncher {
+public class ServerBootstrap {
 
     private Server server;
 
-    public void start() {
-        ServerConfig serverConfig = YamlConfigUtils.load(CommandLineServerLauncher.class.getClassLoader().getResourceAsStream("raftConfig.yml"), ServerConfig.class);
+    public void start(ServerConfig serverConfig) {
         try {
             RaftConfig raftConfig = serverConfig.getRaft();
             switch (raftConfig.getMode()) {
@@ -79,18 +77,6 @@ public class CommandLineServerLauncher {
             log.error(Throwables.getStackTraceAsString(e));
         }
     }
-
-//    private NodeEndpoint parseNodeEndpoint(String rawNodeEndpoint) {
-//        String[] pieces = rawNodeEndpoint.split(",");
-//        if (pieces.length != 3) {
-//            throw new IllegalArgumentException("illegal node endpoint [ " + rawNodeEndpoint + " ]");
-//        }
-//        String nodeId = pieces[0];
-//        String host = pieces[1];
-//        int port;
-//        port = Integer.parseInt(pieces[2]);
-//        return new NodeEndpoint(nodeId, host, port);
-//    }
 
     private void startAsStandaloneOrStandBy(RaftConfig raftConfig, boolean standby) {
         // todo

@@ -1,5 +1,6 @@
 package org.ywb.raft.core.rpc.handler;
 
+import com.google.common.base.Throwables;
 import com.google.common.eventbus.EventBus;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,7 +11,9 @@ import org.ywb.raft.core.rpc.msg.*;
 import org.ywb.raft.core.support.meta.NodeId;
 import org.ywb.raft.core.utils.Assert;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author yuwenbo1
@@ -23,14 +26,16 @@ public abstract class AbstractHandler extends ChannelDuplexHandler {
 
     protected final EventBus eventBus;
 
+    private volatile AppendEntriesRpc lastAppendEntiresRpc;
+
+    private static Map<String, AppendEntriesRpc> map = new ConcurrentHashMap<>();
+
     /**
      * 远程节点id
      */
     NodeId remoteId;
 
     protected NettyRaftChannel channel;
-
-    private AppendEntriesRpc lastAppendEntiresRpc;
 
     public AbstractHandler(EventBus eventBus) {
         this.eventBus = eventBus;
@@ -47,11 +52,17 @@ public abstract class AbstractHandler extends ChannelDuplexHandler {
             eventBus.post(msg);
         } else if (msg instanceof AppendEntriesResult) {
             AppendEntriesResult result = (AppendEntriesResult) msg;
+            AppendEntriesRpc lastAppendEntiresRpc = map.remove(remoteId.getVal());
             if (Objects.isNull(lastAppendEntiresRpc)) {
-                log.warn("no last append entries rpc");
+                log.warn("remove id {}, no last append entries rpc", remoteId.getVal());
             } else {
                 eventBus.post(new AppendEntriesResultMessage(result, remoteId, lastAppendEntiresRpc));
             }
+        } else if (msg instanceof AppendEntriesRpc) {
+            AppendEntriesRpc entriesRpc = (AppendEntriesRpc) msg;
+            eventBus.post(new AppendEntriesRpcMessage(remoteId, entriesRpc));
+        } else {
+            throw new IllegalArgumentException(msg.toString());
         }
     }
 
@@ -59,7 +70,14 @@ public abstract class AbstractHandler extends ChannelDuplexHandler {
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         if (msg instanceof AppendEntriesRpc) {
             lastAppendEntiresRpc = (AppendEntriesRpc) msg;
+            map.put(remoteId.getVal(), lastAppendEntiresRpc);
         }
         super.write(ctx, msg, promise);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        log.warn(Throwables.getStackTraceAsString(cause));
+        ctx.close();
     }
 }

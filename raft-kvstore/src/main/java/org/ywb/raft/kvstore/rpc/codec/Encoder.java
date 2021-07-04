@@ -5,6 +5,8 @@ import com.google.protobuf.MessageLite;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import lombok.extern.slf4j.Slf4j;
+import org.ywb.codec.ProtocolUtils;
 import org.ywb.raft.core.enums.MessageConstants;
 import org.ywb.raft.kvstore.Protos;
 import org.ywb.raft.kvstore.message.*;
@@ -21,6 +23,7 @@ import static org.ywb.raft.core.enums.MessageConstants.*;
  * |               PAYLOAD                     |
  * +-------------------------------------------+
  */
+@Slf4j
 public class Encoder extends MessageToByteEncoder<Object> {
 
     @Override
@@ -71,11 +74,6 @@ public class Encoder extends MessageToByteEncoder<Object> {
     }
 
     private void writeMessage(int msgType, MessageLite message, ByteBuf out) {
-        byte[] bytes = message.toByteArray();
-        out.writeInt(MessageConstants.KV_MAGIC);
-        out.writeInt(MessageConstants.VERSION);
-        out.writeInt(msgType);
-        out.writeInt(bytes.length);
-        out.writeBytes(bytes);
+        ProtocolUtils.write(out, msgType, message.toByteArray());
     }
 }

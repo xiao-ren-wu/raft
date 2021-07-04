@@ -1,5 +1,6 @@
 package org.ywb.raft.core.schedule.task;
 
+import lombok.extern.slf4j.Slf4j;
 import org.ywb.raft.core.schedule.NullScheduleFuture;
 
 import java.util.concurrent.ScheduledFuture;
@@ -11,6 +12,7 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  * 选举超时定时器
  */
+@Slf4j
 public class ElectionTimeoutTask {
 
     public static final ElectionTimeoutTask NONE = new ElectionTimeoutTask(new NullScheduleFuture());
@@ -25,7 +27,7 @@ public class ElectionTimeoutTask {
      * 取消选举超时
      */
     public void cancel() {
-        this.scheduledFuture.cancel(false);
+        this.scheduledFuture.cancel(true);
     }
 
     @Override

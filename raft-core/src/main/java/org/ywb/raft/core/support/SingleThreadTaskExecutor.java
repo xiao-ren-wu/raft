@@ -1,5 +1,8 @@
 package org.ywb.raft.core.support;
 
+import com.google.common.base.Throwables;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.concurrent.*;
 
 /**
@@ -8,6 +11,7 @@ import java.util.concurrent.*;
  * @since 1.0.0
  * 异步单线程实现
  */
+@Slf4j
 public class SingleThreadTaskExecutor implements TaskExecutor {
 
     private final ExecutorService executorService;
@@ -26,7 +30,14 @@ public class SingleThreadTaskExecutor implements TaskExecutor {
 
     @Override
     public Future<?> submit(Runnable task) {
-        return this.executorService.submit(task);
+        return this.executorService.submit(() -> {
+            try {
+                task.run();
+            } catch (Exception e) {
+                log.error(Throwables.getStackTraceAsString(e));
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override

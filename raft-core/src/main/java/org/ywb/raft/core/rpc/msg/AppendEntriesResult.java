@@ -1,6 +1,7 @@
 package org.ywb.raft.core.rpc.msg;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import lombok.ToString;
  */
 @ToString
 @Getter
+@Builder
 @AllArgsConstructor
 public class AppendEntriesResult {
 

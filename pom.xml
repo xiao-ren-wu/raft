@@ -10,6 +10,8 @@
     <modules>
         <module>raft-core</module>
         <module>raft-kvstore</module>
+        <module>raft-client</module>
+        <module>raft-codec</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -3,15 +3,14 @@ package org.ywb.raft.kvstore.rpc.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import org.ywb.codec.ProtocolUtils;
+import org.ywb.codec.protocol.Message;
 import org.ywb.raft.core.enums.MessageConstants;
-import org.ywb.raft.core.exceptions.MagicCodeErrorException;
-import org.ywb.raft.core.utils.Assert;
 import org.ywb.raft.kvstore.Protos;
 import org.ywb.raft.kvstore.message.*;
 
 import java.util.List;
-
-import static org.ywb.raft.core.enums.MessageConstants.RAFT_MAGIC;
+import java.util.Objects;
 
 /**
  * @author yuwenbo1
@@ -22,23 +21,12 @@ public class Decoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf in, List<Object> out) throws Exception {
-        // 等待数据
-        if (in.readableBytes() < MessageConstants.HEADER_LEN) {
+        Message message = ProtocolUtils.read(in);
+        if (Objects.isNull(message)) {
             return;
         }
-        in.markReaderIndex();
-        int magic = in.readInt();
-        Assert.isTrue(RAFT_MAGIC - magic == 0, () -> new MagicCodeErrorException(magic));
-        // skip version
-        in.skipBytes(4);
-        // msg type
-        int msgType = in.readInt();
-        int payLoadLength = in.readInt();
-        if (in.readableBytes() < payLoadLength) {
-            in.resetReaderIndex();
-            return;
-        }
-        byte[] payload = new byte[payLoadLength];
+        int msgType = message.getHeader().getMessageType();
+        byte[] payload = message.getPayload();
         switch (msgType) {
             case MessageConstants.MSG_TYPE_SUCCESS:
                 out.add(Success.INSTANCE);

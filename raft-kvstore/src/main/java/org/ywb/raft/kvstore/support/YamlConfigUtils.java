@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
 
+import static org.ywb.raft.core.utils.ClassPathUtils.getResourceStream;
+
 /**
  * @author yuwenbo1
  * @date 2021/6/29 10:45 下午 星期二
@@ -22,6 +24,10 @@ public class YamlConfigUtils {
 
     public static <T> T load(InputStream inputStream, Class<T> tClass) {
         return YAML.loadAs(inputStream, tClass);
+    }
+
+    public static <T> T loadResource(String filename, Class<T> tClass) {
+        return YAML.loadAs(getResourceStream(filename), tClass);
     }
 
 }

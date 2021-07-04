@@ -1,18 +1,26 @@
 package org.ywb.raft.core.rpc.codec;
 
+import com.google.common.base.Throwables;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import lombok.extern.slf4j.Slf4j;
+import org.ywb.codec.ProtocolUtils;
 import org.ywb.raft.core.enums.MessageConstants;
+import org.ywb.raft.core.log.entry.Entry;
+import org.ywb.raft.core.log.entry.EntryFactory;
 import org.ywb.raft.core.proto.Protos;
+import org.ywb.raft.core.rpc.msg.AppendEntriesResult;
+import org.ywb.raft.core.rpc.msg.AppendEntriesRpc;
 import org.ywb.raft.core.rpc.msg.RequestVoteResult;
 import org.ywb.raft.core.rpc.msg.RequestVoteRpc;
 import org.ywb.raft.core.support.meta.NodeId;
 
 import java.nio.charset.StandardCharsets;
-
-import static org.ywb.raft.core.enums.MessageConstants.RAFT_MAGIC;
-import static org.ywb.raft.core.enums.MessageConstants.VERSION;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author yuwenbo1
@@ -25,12 +33,14 @@ import static org.ywb.raft.core.enums.MessageConstants.VERSION;
  * |               PAYLOAD                     |
  * +-------------------------------------------+
  */
+@Slf4j
 public class Encoder extends MessageToByteEncoder<Object> {
 
     @Override
     public void encode(ChannelHandlerContext channelHandlerContext, Object msg, ByteBuf out) throws Exception {
+//        log.debug("encode obj {}", msg);
         if (msg instanceof NodeId) {
-            this.writeMessage(out, MessageConstants.MSG_TYPE_NODE_ID, ((NodeId) msg).getVal().getBytes(StandardCharsets.UTF_8));
+            ProtocolUtils.write(out, MessageConstants.MSG_TYPE_NODE_ID, ((NodeId) msg).getVal().getBytes(StandardCharsets.UTF_8));
         } else if (msg instanceof RequestVoteRpc) {
             RequestVoteRpc requestVoteRpc = (RequestVoteRpc) msg;
             Protos.RequestVoteRpc protoRpc = Protos.RequestVoteRpc.newBuilder()
@@ -39,22 +49,47 @@ public class Encoder extends MessageToByteEncoder<Object> {
                     .setLastLogIndex(requestVoteRpc.getLastLogIndex())
                     .setLastLogTerm(requestVoteRpc.getLastLogTerm())
                     .build();
-            this.writeMessage(out, MessageConstants.MSG_TYPE_REQUEST_VOTE_RPC, protoRpc.toByteArray());
+            ProtocolUtils.write(out, MessageConstants.MSG_TYPE_REQUEST_VOTE_RPC, protoRpc.toByteArray());
         } else if (msg instanceof RequestVoteResult) {
             RequestVoteResult requestVoteResult = (RequestVoteResult) msg;
             Protos.RequestVoteResult voteResultProto = Protos.RequestVoteResult.newBuilder()
                     .setTerm(requestVoteResult.getTerm())
                     .setVoteGranted(requestVoteResult.isVoteGranted())
                     .build();
-            this.writeMessage(out, MessageConstants.MSG_TYPE_REQUEST_VOTE_RESULT, voteResultProto.toByteArray());
+            ProtocolUtils.write(out, MessageConstants.MSG_TYPE_REQUEST_VOTE_RESULT, voteResultProto.toByteArray());
+        } else if (msg instanceof AppendEntriesRpc) {
+            Protos.AppendEntriesRpc appendEntriesRpcProto = null;
+                AppendEntriesRpc appendEntriesRpc = (AppendEntriesRpc) msg;
+                appendEntriesRpcProto = Protos.AppendEntriesRpc
+                        .newBuilder()
+                        .setTerm(appendEntriesRpc.getTerm())
+                        .setLeaderCommit(appendEntriesRpc.getLeaderCommit())
+                        .setPrevLogIndex(appendEntriesRpc.getPrevLogIndex())
+                        .setPrevLogTerm(appendEntriesRpc.getPrevLogTerm())
+                        .setLeaderId(appendEntriesRpc.getLeaderId().getVal())
+                        .setLastEntryIndex(appendEntriesRpc.getLastEntryIndex())
+                        .addAllEntries(entry2Proto(appendEntriesRpc.getEntries()))
+                        .build();
+            ProtocolUtils.write(out, MessageConstants.MSG_TYPE_APPEND_ENTRIES_RPC, appendEntriesRpcProto.toByteArray());
+        } else if (msg instanceof AppendEntriesResult) {
+            AppendEntriesResult appendEntriesResult = (AppendEntriesResult) msg;
+            Protos.AppendEntriesResult entriesResultProto = Protos.AppendEntriesResult
+                    .newBuilder()
+                    .setTerm(appendEntriesResult.getTerm())
+                    .setSuccess(appendEntriesResult.isSuccess())
+                    .build();
+            ProtocolUtils.write(out, MessageConstants.MSG_TYPE_APPEND_ENTRIES_RESULT, entriesResultProto.toByteArray());
+        } else {
+            throw new IllegalArgumentException(msg.toString());
         }
     }
 
-    private void writeMessage(ByteBuf out, int msgType, byte[] bytes) {
-        out.writeInt(RAFT_MAGIC);
-        out.writeInt(VERSION);
-        out.writeInt(msgType);
-        out.writeInt(bytes.length);
-        out.writeBytes(bytes);
+    private Iterable<? extends Protos.AppendEntriesRpc.Entry> entry2Proto(List<Entry> entries) {
+        if(entries==null||entries.isEmpty()){
+            return new ArrayList<>();
+        }
+        return entries.stream()
+                .map(EntryFactory::entry2Proto)
+                .collect(Collectors.toList());
     }
 }

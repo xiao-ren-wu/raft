@@ -21,6 +21,12 @@ public abstract class Assert {
         }
     }
 
+    public static void isTrue(Boolean expression, String err) {
+        if (!expression) {
+            throw new IllegalArgumentException(err);
+        }
+    }
+
     public static void nonNull(Object o) {
         if (o == null) {
             throw new IllegalArgumentException();

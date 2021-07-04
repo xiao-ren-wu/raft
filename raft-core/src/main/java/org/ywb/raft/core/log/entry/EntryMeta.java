@@ -21,4 +21,13 @@ public class EntryMeta {
         this.index = index;
         this.term = term;
     }
+
+    /**
+     * 服务第一次启动时内存和文件中的entry都为空
+     *
+     * @return first entry meta
+     */
+    public static EntryMeta firstEntryMeta() {
+        return new EntryMeta(Entry.KIND_NO_OP, 1, -1);
+    }
 }

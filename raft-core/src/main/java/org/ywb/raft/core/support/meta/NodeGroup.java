@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.ywb.raft.core.support.ReplicatingState;
 import org.ywb.raft.core.utils.Assert;
 import sun.rmi.transport.Channel;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
  * 节点群组信息
  */
 @Slf4j
+@ToString
 public class NodeGroup {
 
     /**
@@ -98,6 +100,14 @@ public class NodeGroup {
 
     public GroupMember findSelf() {
         return findGroupMember(selfNodeId);
+    }
+
+    public void resetReplicatingStates(int idx) {
+        for (GroupMember member : memberMap.values()) {
+            if (!member.idEquals(selfNodeId)) {
+                member.setReplicatingState(new ReplicatingState(idx));
+            }
+        }
     }
 
     @Getter

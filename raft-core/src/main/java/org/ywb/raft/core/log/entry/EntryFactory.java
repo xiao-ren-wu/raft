@@ -1,5 +1,8 @@
 package org.ywb.raft.core.log.entry;
 
+import com.google.protobuf.ByteString;
+import org.ywb.raft.core.proto.Protos;
+
 /**
  * @author yuwenbo1
  * @date 2021/4/25 10:14 下午 星期日
@@ -16,5 +19,18 @@ public class EntryFactory {
             default:
                 throw new IllegalArgumentException(String.format("kind %s not found", kind));
         }
+    }
+
+    public static Entry proto2Entry(Protos.AppendEntriesRpc.Entry entry) {
+        return create(entry.getKind(), entry.getIndex(), entry.getTerm(), entry.getData().toByteArray());
+    }
+
+    public static Protos.AppendEntriesRpc.Entry entry2Proto(Entry entry) {
+        return Protos.AppendEntriesRpc.Entry.newBuilder()
+                .setTerm(entry.getTerm())
+                .setKind(entry.getKind())
+                .setIndex(entry.getIndex())
+                .setData(ByteString.copyFrom(entry.getCommandBytes()))
+                .build();
     }
 }

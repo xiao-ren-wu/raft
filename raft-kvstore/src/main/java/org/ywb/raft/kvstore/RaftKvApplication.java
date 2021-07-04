@@ -1,5 +1,8 @@
 package org.ywb.raft.kvstore;
 
+import org.ywb.raft.kvstore.config.ServerConfig;
+import org.ywb.raft.kvstore.support.YamlConfigUtils;
+
 /**
  * @author yuwenbo1
  * @date 2021/6/27 10:33 下午 星期日
@@ -7,6 +10,7 @@ package org.ywb.raft.kvstore;
  */
 public class RaftKvApplication {
     public static void main(String[] args) {
-        new CommandLineServerLauncher().start();
+        new ServerBootstrap()
+                .start(YamlConfigUtils.loadResource("raftConfig.yaml", ServerConfig.class));
     }
 }

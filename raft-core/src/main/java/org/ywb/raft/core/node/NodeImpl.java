@@ -9,8 +9,8 @@ import org.ywb.raft.core.node.support.RoleNameAndLeaderId;
 import org.ywb.raft.core.rpc.msg.AppendEntriesRpc;
 import org.ywb.raft.core.rpc.msg.RequestVoteRpc;
 import org.ywb.raft.core.schedule.task.ElectionTimeoutTask;
-import org.ywb.raft.core.support.NodeContext;
 import org.ywb.raft.core.statemachine.StateMachine;
+import org.ywb.raft.core.support.NodeContext;
 import org.ywb.raft.core.support.meta.GroupMember;
 import org.ywb.raft.core.support.meta.NodeEndpoint;
 import org.ywb.raft.core.support.role.AbstractNodeRole;
@@ -55,8 +55,6 @@ public class NodeImpl implements Node {
         if (started) {
             return;
         }
-        // 注册到自己的eventBus
-///        context.getEventBus().register(this);
         // 初始化连接器
         context.getConnector().initialize();
         // 启动时为follower
@@ -132,7 +130,9 @@ public class NodeImpl implements Node {
     }
 
     private void doReplicateLogCore(GroupMember member, int maxEntries) {
-        AppendEntriesRpc appendEntriesRpc = AppendEntriesRpc.builder()
+        log.info("next index{}",member.getNextIndex());
+        AppendEntriesRpc
+                appendEntriesRpc = AppendEntriesRpc.builder()
                 .term(this.getRole().getTerm())
                 .leaderId(context.getSelfId())
                 .prevLogIndex(member.getNextIndex())
@@ -185,15 +185,4 @@ public class NodeImpl implements Node {
                 .build();
         context.getConnector().sendRequestVote(requestVoteRpc, context.getNodeGroup().listEndpointExceptSelf());
     }
-
-    private static final FutureCallback<Object> LOGGING_FUTURE_CALLBACK = new FutureCallback<Object>() {
-        @Override
-        public void onSuccess(@Nullable Object result) {
-        }
-
-        @Override
-        public void onFailure(@Nonnull Throwable t) {
-            log.warn("failure", t);
-        }
-    };
 }

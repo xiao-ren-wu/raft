@@ -38,7 +38,13 @@ public abstract class AbstractLog implements Log {
         if (entrySequence.isEmpty()) {
             return new EntryMeta(Entry.KIND_NO_OP, 0, 0);
         }
-        return entrySequence.getLastEntry().getMeta();
+        // todo 首次启动时，文件中的entry和内存中的entry都为空
+        Entry lastEntry = entrySequence.getLastEntry();
+        if (lastEntry != null) {
+            return lastEntry.getMeta();
+        } else {
+            return EntryMeta.firstEntryMeta();
+        }
     }
 
     @Override
@@ -108,6 +114,7 @@ public abstract class AbstractLog implements Log {
         }
         // Leader节点传递过来的日志条目为空
         if (leaderEntries.isEmpty()) {
+            log.debug("empty entries heart beat");
             return true;
         }
         // 移除冲突的日志条目并返回接下来要追加的日志条目（如果日志还有的话）
@@ -192,6 +199,10 @@ public abstract class AbstractLog implements Log {
     }
 
     private boolean checkIfPreviousLogMatches(int prevLogIndex, int prevLogTerm) {
+        if (prevLogIndex == 1) {
+            // todo 第一次启动时没有entry
+            return true;
+        }
         EntryMeta prevEntryMeta = entrySequence.getEntryMeta(prevLogIndex);
         if (Objects.isNull(prevEntryMeta)) {
             log.debug("previous log {} not found", prevLogIndex);

@@ -2,6 +2,8 @@ package org.ywb.raft.core.support;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author yuwenbo1
@@ -11,6 +13,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
+@Slf4j
 public class ReplicatingState {
 
     private int nextIndex;
@@ -28,8 +32,9 @@ public class ReplicatingState {
     }
 
     public boolean advance(int lastEntryIndex) {
-        // changed
-        boolean result = (matchIndex != lastEntryIndex || nextIndex != (lastEntryIndex + 1));
+        log.debug("matchIndex={},lastEntryIndex={},nextIndex={}",matchIndex,lastEntryIndex,nextIndex);
+        // todo changed,我认为是==
+        boolean result = (matchIndex == lastEntryIndex || nextIndex == (lastEntryIndex + 1));
 
         matchIndex = lastEntryIndex;
         nextIndex = lastEntryIndex + 1;

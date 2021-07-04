@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import org.ywb.raft.core.log.dir.LogGeneration;
 import org.ywb.raft.core.log.dir.RootDir;
 import org.ywb.raft.core.log.sequence.FileEntrySequence;
+import org.ywb.raft.core.utils.Assert;
 
 import java.io.File;
 
@@ -42,6 +43,7 @@ public class FileLog extends AbstractLog {
 
     public FileLog(File baseDir, EventBus eventBus) {
         super(eventBus);
+        mkdirIfBaseDirNotExist(baseDir);
         rootDir = new RootDir(baseDir);
         LogGeneration latestGeneration = rootDir.getLatestGeneration();
         if (latestGeneration != null) {
@@ -50,6 +52,15 @@ public class FileLog extends AbstractLog {
         } else {
             LogGeneration firstGeneration = rootDir.createFirstGeneration();
             entrySequence = new FileEntrySequence(firstGeneration, 1);
+        }
+    }
+
+    private void mkdirIfBaseDirNotExist(File baseDir) {
+        if (baseDir.isFile()) {
+            throw new IllegalArgumentException("base dir must a directory but " + baseDir + " is a file");
+        }
+        if (!baseDir.exists()) {
+            Assert.isTrue(baseDir.mkdir(), "try to create log base directory failed");
         }
     }
 }

@@ -18,6 +18,7 @@ message AppendEntriesRpc {
     int32 prev_log_index = 4;
     int32 prev_log_term = 5;
     int32 leader_commit = 6;
+    int32 last_entry_index = 7;
 
     message Entry {
         int32 kind = 1;
@@ -26,7 +27,7 @@ message AppendEntriesRpc {
         bytes data = 4;
     }
 
-    repeated Entry entries = 7;
+    repeated Entry entries = 8;
 }
 message AppendEntriesResult {
     int32 term = 2;
