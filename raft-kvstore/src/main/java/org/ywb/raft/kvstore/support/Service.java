@@ -44,7 +44,7 @@ public class Service {
             return;
         }
         SetCommand command = commandRequest.getCommand();
-        log.debug("set {}", command.getKey());
+        log.debug("set {}-{}", command.getKey(),command.getValue());
         // 记录请求ID和CommandRequest的映射
         this.pendingCommands.put(command.getRequestId(), commandRequest);
         // 客户端关闭连接时从映射中移除

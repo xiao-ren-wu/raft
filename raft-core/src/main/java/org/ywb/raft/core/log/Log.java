@@ -100,4 +100,6 @@ public interface Log {
      * 关闭
      */
     void close();
+
+
 }

@@ -1,5 +1,6 @@
 package org.ywb.raft.core.log.sequence;
 
+import lombok.extern.slf4j.Slf4j;
 import org.ywb.raft.core.exceptions.EmptySequenceException;
 import org.ywb.raft.core.log.entry.Entry;
 import org.ywb.raft.core.log.entry.EntryMeta;
@@ -20,6 +21,7 @@ import java.util.List;
  *     |                               |
  * logIndexOffset                 nextLogIndex
  */
+@Slf4j
 public abstract class AbstractEntrySequence implements EntrySequence {
 
     protected int logIndexOffset;

@@ -1,5 +1,6 @@
 package org.ywb.raft.core.rpc.codec;
 
+import com.google.common.base.Throwables;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.ywb.raft.core.enums.MessageConstants.*;
+import static org.ywb.codec.consts.MessageConstants.*;
 
 /**
  * @author yuwenbo1
@@ -37,7 +38,6 @@ public class Decoder extends ByteToMessageDecoder {
         if (Objects.isNull(message)) {
             return;
         }
-//        log.debug("decode:{}", message);
         byte[] payload = message.getPayload();
         int msgType = message.getHeader().getMessageType();
         // 根据消息类型进行反序列化
@@ -64,16 +64,20 @@ public class Decoder extends ByteToMessageDecoder {
                 out.add(voteResult);
                 break;
             case MSG_TYPE_APPEND_ENTRIES_RPC:
-                Protos.AppendEntriesRpc appendEntriesRpcProto = Protos.AppendEntriesRpc.parseFrom(payload);
-                AppendEntriesRpc entriesRpc = AppendEntriesRpc.builder()
-                        .lastEntryIndex(appendEntriesRpcProto.getLastEntryIndex())
-                        .term(appendEntriesRpcProto.getTerm())
-                        .entries(proto2Obj(appendEntriesRpcProto.getEntriesList()))
-                        .leaderCommit(appendEntriesRpcProto.getLeaderCommit())
-                        .leaderId(NodeId.of(appendEntriesRpcProto.getLeaderId()))
-                        .prevLogIndex(appendEntriesRpcProto.getPrevLogIndex())
-                        .build();
-                out.add(entriesRpc);
+                try {
+                    Protos.AppendEntriesRpc appendEntriesRpcProto = Protos.AppendEntriesRpc.parseFrom(payload);
+                    AppendEntriesRpc entriesRpc = AppendEntriesRpc.builder()
+                            .lastEntryIndex(appendEntriesRpcProto.getLastEntryIndex())
+                            .term(appendEntriesRpcProto.getTerm())
+                            .entries(proto2Obj(appendEntriesRpcProto.getEntriesList()))
+                            .leaderCommit(appendEntriesRpcProto.getLeaderCommit())
+                            .leaderId(NodeId.of(appendEntriesRpcProto.getLeaderId()))
+                            .prevLogIndex(appendEntriesRpcProto.getPrevLogIndex())
+                            .build();
+                    out.add(entriesRpc);
+                }catch (Exception e){
+                    log.error(Throwables.getStackTraceAsString(e));
+                }
                 break;
             case MSG_TYPE_APPEND_ENTRIES_RESULT:
                 Protos.AppendEntriesResult appendEntriesResult = Protos.AppendEntriesResult.parseFrom(payload);
@@ -86,7 +90,6 @@ public class Decoder extends ByteToMessageDecoder {
             default:
                 throw new IllegalArgumentException("no handler");
         }
-
     }
 
     private List<Entry> proto2Obj(List<Protos.AppendEntriesRpc.Entry> entriesList) {

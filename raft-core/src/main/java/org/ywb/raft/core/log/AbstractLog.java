@@ -58,14 +58,18 @@ public abstract class AbstractLog implements Log {
         rpc.setLeaderId(selfId);
         rpc.setLeaderCommit(getCommitIndex());
         Entry entry = entrySequence.getEntry(nextIndex - 1);
+        log.info(".......entry::{}", entry);
         if (Objects.nonNull(entry)) {
-            rpc.setPrevLogIndex(entry.getIndex());
+            rpc.setPrevLogIndex(entry.getIndex() - 1);
             rpc.setPrevLogTerm(entry.getTerm());
         }
         // 设置entries
         if (!entrySequence.isEmpty()) {
+            log.info("nextlogIndex:{},nextIndex:{},maxEntires:{}", nextLogIndex, nextIndex, maxEntries);
             int maxIndex = (maxEntries == ALL_ENTRIES ? nextLogIndex : Math.min(nextLogIndex, nextIndex + maxEntries));
-            rpc.setEntries(entrySequence.subList(nextIndex, maxIndex));
+            log.info("maxIndex:{}", maxIndex);
+            rpc.setEntries(entrySequence.subList(nextIndex-1, maxIndex));
+            log.info("appendEntries........{}",rpc.getEntries());
         }
         return rpc;
     }
@@ -88,7 +92,7 @@ public abstract class AbstractLog implements Log {
     @Override
     public boolean isNewThan(int lastLogIndex, int lastLogTerm) {
         EntryMeta lastEntryMeta = getLastEntryMeta();
-        log.debug("last entry ({},{}),candidate,({}{})", lastEntryMeta.getIndex(), lastEntryMeta.getTerm(), lastLogIndex, lastLogTerm);
+        log.debug("last entry ({},{}),candidate,({},{})", lastEntryMeta.getIndex(), lastEntryMeta.getTerm(), lastLogIndex, lastLogTerm);
         return lastEntryMeta.getTerm() > lastLogTerm || lastEntryMeta.getIndex() > lastLogIndex;
     }
 
@@ -159,6 +163,7 @@ public abstract class AbstractLog implements Log {
     }
 
     private boolean validateNewCommitIndex(int newCommitIndex, int currentTerm) {
+        log.info("......newCommitIndex{},currentTerm{}", newCommitIndex, currentTerm);
         // 小于当前的commitIndex
         if (newCommitIndex <= entrySequence.getCommitIndex()) {
             return false;
@@ -199,8 +204,9 @@ public abstract class AbstractLog implements Log {
     }
 
     private boolean checkIfPreviousLogMatches(int prevLogIndex, int prevLogTerm) {
-        if (prevLogIndex == 1) {
-            // todo 第一次启动时没有entry
+        if (prevLogIndex == 0 || prevLogIndex == 1) {
+            // todo 第一次启动时没有entry,prevLog=0,
+            // 第一次真实数据追加时，preLogIndex为1，也同样没有之前的数据，注解返回true
             return true;
         }
         EntryMeta prevEntryMeta = entrySequence.getEntryMeta(prevLogIndex);

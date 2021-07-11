@@ -26,11 +26,19 @@ public class EntryFactory {
     }
 
     public static Protos.AppendEntriesRpc.Entry entry2Proto(Entry entry) {
-        return Protos.AppendEntriesRpc.Entry.newBuilder()
-                .setTerm(entry.getTerm())
-                .setKind(entry.getKind())
-                .setIndex(entry.getIndex())
-                .setData(ByteString.copyFrom(entry.getCommandBytes()))
-                .build();
+        if (entry.getKind() == Entry.KIND_NO_OP) {
+            return Protos.AppendEntriesRpc.Entry.newBuilder()
+                    .setTerm(entry.getTerm())
+                    .setKind(entry.getKind())
+                    .setIndex(entry.getIndex())
+                    .build();
+        } else {
+            return Protos.AppendEntriesRpc.Entry.newBuilder()
+                    .setTerm(entry.getTerm())
+                    .setKind(entry.getKind())
+                    .setIndex(entry.getIndex())
+                    .setData(ByteString.copyFrom(entry.getCommandBytes()))
+                    .build();
+        }
     }
 }

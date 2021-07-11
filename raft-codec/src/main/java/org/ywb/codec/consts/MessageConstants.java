@@ -1,7 +1,4 @@
-package org.ywb.raft.core.enums;
-
-import io.netty.util.AttributeKey;
-import org.ywb.raft.core.rpc.msg.AppendEntriesRpc;
+package org.ywb.codec.consts;
 
 /**
  * @author yuwenbo1
@@ -23,6 +20,4 @@ public interface MessageConstants {
     int MSG_TYPE_SET_COMMAND = 8;
     int MSG_TYPE_APPEND_ENTRIES_RPC = 9;
     int MSG_TYPE_APPEND_ENTRIES_RESULT = 10;
-
-
 }

@@ -1,6 +1,7 @@
 package org.ywb.raft.core.log.entry;
 
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * @author yuwenbo1
@@ -8,6 +9,7 @@ import lombok.Getter;
  * @since 1.0.0
  */
 @Getter
+@ToString
 public class EntryMeta {
 
     private final int kind;

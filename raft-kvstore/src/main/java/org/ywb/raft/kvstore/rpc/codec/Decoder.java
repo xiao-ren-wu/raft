@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.ywb.codec.ProtocolUtils;
 import org.ywb.codec.protocol.Message;
-import org.ywb.raft.core.enums.MessageConstants;
+import org.ywb.codec.consts.MessageConstants;
 import org.ywb.raft.kvstore.Protos;
 import org.ywb.raft.kvstore.message.*;
 

@@ -2,7 +2,6 @@ package org.ywb.raft.core.eventbus;
 
 import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
-import org.ywb.raft.core.log.entry.EntryMeta;
 import org.ywb.raft.core.node.Node;
 import org.ywb.raft.core.rpc.msg.*;
 import org.ywb.raft.core.schedule.task.ElectionTimeoutTask;
@@ -247,7 +246,8 @@ public class OnReceiveSubScribeImpl implements OnReceiveSubscribe {
             if (groupMember.advanceReplicatingState(rpc.getLastEntryIndex())) {
                 context.getLog()
                         .advanceCommitIndex(
-                                context.getNodeGroup().getMatchIndexOfMajor(),
+                                context.getLog().getNextIndex() - 1,
+//                                context.getNodeGroup().getMatchIndexOfMajor(),
                                 node.getRole().getTerm());
             } else {
                 // 对方回复失败,回退日志

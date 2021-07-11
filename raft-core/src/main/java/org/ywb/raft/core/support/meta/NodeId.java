@@ -1,9 +1,7 @@
 package org.ywb.raft.core.support.meta;
 
 import com.google.common.base.Preconditions;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
 
 /**
  * @author yuwenbo1
@@ -11,9 +9,7 @@ import lombok.ToString;
  * @since 1.0.0
  * 节点信息
  */
-@Getter
-@ToString
-@EqualsAndHashCode
+@Data
 public class NodeId {
 
     private final String val;
@@ -26,4 +22,5 @@ public class NodeId {
     public static NodeId of(String val) {
         return new NodeId(val);
     }
+
 }

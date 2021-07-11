@@ -7,11 +7,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.ywb.codec.ProtocolUtils;
-import org.ywb.raft.core.enums.MessageConstants;
+import org.ywb.codec.consts.MessageConstants;
 import org.ywb.raft.kvstore.Protos;
 import org.ywb.raft.kvstore.message.*;
 
-import static org.ywb.raft.core.enums.MessageConstants.*;
+import static org.ywb.codec.consts.MessageConstants.*;
 
 /**
  * @author yuwenbo1

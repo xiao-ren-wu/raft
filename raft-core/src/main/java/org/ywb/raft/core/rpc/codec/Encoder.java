@@ -6,7 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.ywb.codec.ProtocolUtils;
-import org.ywb.raft.core.enums.MessageConstants;
+import org.ywb.codec.consts.MessageConstants;
 import org.ywb.raft.core.log.entry.Entry;
 import org.ywb.raft.core.log.entry.EntryFactory;
 import org.ywb.raft.core.proto.Protos;
@@ -19,7 +19,6 @@ import org.ywb.raft.core.support.meta.NodeId;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +37,6 @@ public class Encoder extends MessageToByteEncoder<Object> {
 
     @Override
     public void encode(ChannelHandlerContext channelHandlerContext, Object msg, ByteBuf out) throws Exception {
-//        log.debug("encode obj {}", msg);
         if (msg instanceof NodeId) {
             ProtocolUtils.write(out, MessageConstants.MSG_TYPE_NODE_ID, ((NodeId) msg).getVal().getBytes(StandardCharsets.UTF_8));
         } else if (msg instanceof RequestVoteRpc) {
@@ -58,7 +56,9 @@ public class Encoder extends MessageToByteEncoder<Object> {
                     .build();
             ProtocolUtils.write(out, MessageConstants.MSG_TYPE_REQUEST_VOTE_RESULT, voteResultProto.toByteArray());
         } else if (msg instanceof AppendEntriesRpc) {
-            Protos.AppendEntriesRpc appendEntriesRpcProto = null;
+            try {
+
+                Protos.AppendEntriesRpc appendEntriesRpcProto = null;
                 AppendEntriesRpc appendEntriesRpc = (AppendEntriesRpc) msg;
                 appendEntriesRpcProto = Protos.AppendEntriesRpc
                         .newBuilder()
@@ -70,7 +70,10 @@ public class Encoder extends MessageToByteEncoder<Object> {
                         .setLastEntryIndex(appendEntriesRpc.getLastEntryIndex())
                         .addAllEntries(entry2Proto(appendEntriesRpc.getEntries()))
                         .build();
-            ProtocolUtils.write(out, MessageConstants.MSG_TYPE_APPEND_ENTRIES_RPC, appendEntriesRpcProto.toByteArray());
+                ProtocolUtils.write(out, MessageConstants.MSG_TYPE_APPEND_ENTRIES_RPC, appendEntriesRpcProto.toByteArray());
+            }catch (Exception e){
+                log.error(Throwables.getStackTraceAsString(e));
+            }
         } else if (msg instanceof AppendEntriesResult) {
             AppendEntriesResult appendEntriesResult = (AppendEntriesResult) msg;
             Protos.AppendEntriesResult entriesResultProto = Protos.AppendEntriesResult

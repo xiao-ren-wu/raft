@@ -1,5 +1,6 @@
 package org.ywb.raft.core.log.sequence;
 
+import lombok.extern.slf4j.Slf4j;
 import org.ywb.raft.core.exceptions.LogException;
 import org.ywb.raft.core.log.dir.LogDir;
 import org.ywb.raft.core.log.entry.EntriesFile;
@@ -18,6 +19,7 @@ import java.util.List;
  * @date 2021/4/26 8:12 上午 星期一
  * @since 1.0.0
  */
+@Slf4j
 public class FileEntrySequence extends AbstractEntrySequence {
 
     private final EntriesFile entriesFile;
@@ -188,7 +190,7 @@ public class FileEntrySequence extends AbstractEntrySequence {
 
     @Override
     public Entry getLastEntry() {
-        if (!isEmpty()) {
+        if (isEmpty()) {
             return null;
         }
         if (!pendingEntries.isEmpty()) {

@@ -5,6 +5,8 @@ import org.ywb.codec.protocol.Message;
 import org.ywb.codec.protocol.MessageHeader;
 import org.ywb.codec.support.MagicCodeErrorException;
 
+import java.io.*;
+
 import static org.ywb.codec.consts.ProtocolConstant.*;
 
 /**
@@ -62,4 +64,35 @@ public final class ProtocolUtils {
         out.writeBytes(bytes);
     }
 
+    public static Message read(InputStream input) throws IOException {
+        DataInputStream dataInput = new DataInputStream(input);
+        MessageHeader header = new MessageHeader();
+        int magic = dataInput.readInt();
+        if (RAFT_MAGIC - magic != 0) {
+            throw new MagicCodeErrorException(magic);
+        }
+        // version
+        header.setVersion(dataInput.readInt());
+        // msg type
+        header.setMessageType(dataInput.readInt());
+        // payload len
+        int payloadLen = dataInput.readInt();
+        header.setPayloadLen(payloadLen);
+        int messageType = dataInput.readInt();
+        header.setMessageType(messageType);
+        int payloadLength = dataInput.readInt();
+        byte[] payload = new byte[payloadLength];
+        dataInput.readFully(payload);
+        return new Message(header, payload);
+    }
+
+    public static void write(OutputStream output, int messageType, byte[] payload) throws IOException {
+        DataOutputStream dataOutput = new DataOutputStream(output);
+        dataOutput.writeInt(RAFT_MAGIC);
+        dataOutput.writeInt(VERSION);
+        dataOutput.writeInt(messageType);
+        dataOutput.writeInt(payload.length);
+        dataOutput.write(payload);
+        dataOutput.flush();
+    }
 }

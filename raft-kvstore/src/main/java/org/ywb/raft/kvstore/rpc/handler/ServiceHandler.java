@@ -2,6 +2,7 @@ package org.ywb.raft.kvstore.rpc.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import lombok.extern.slf4j.Slf4j;
 import org.ywb.raft.kvstore.message.GetCommand;
 import org.ywb.raft.kvstore.message.SetCommand;
 import org.ywb.raft.kvstore.support.CommandRequest;
@@ -12,6 +13,7 @@ import org.ywb.raft.kvstore.support.Service;
  * @date 2021/6/1 10:39 下午 星期二
  * @since 1.0.0
  */
+@Slf4j
 public class ServiceHandler extends ChannelInboundHandlerAdapter {
 
     private final Service service;
@@ -22,6 +24,7 @@ public class ServiceHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        log.info("recv msg{}...............", msg);
         if (msg instanceof GetCommand) {
             service.get(new CommandRequest<>((GetCommand) msg, ctx.channel()));
         } else if (msg instanceof SetCommand) {

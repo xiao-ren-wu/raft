@@ -1,6 +1,5 @@
 package org.ywb.raft.core.node;
 
-import com.google.common.util.concurrent.FutureCallback;
 import lombok.extern.slf4j.Slf4j;
 import org.ywb.raft.core.enums.RoleName;
 import org.ywb.raft.core.exceptions.NotLeaderException;
@@ -17,9 +16,6 @@ import org.ywb.raft.core.support.role.AbstractNodeRole;
 import org.ywb.raft.core.support.role.CandidateNodeRole;
 import org.ywb.raft.core.support.role.FollowerNodeRole;
 import org.ywb.raft.core.utils.Assert;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * @author yuwenbo1
@@ -114,14 +110,14 @@ public class NodeImpl implements Node {
 
     @Override
     public void doReplicateLog() {
-        log.debug("replicate log");
         int nextIndex = context.getLog().getNextIndex();
         EntryMeta lastEntryMeta = context.getLog().getLastEntryMeta();
         int index = lastEntryMeta.getIndex();
-        int maxEntries = index - nextIndex;
+        int maxEntries = nextIndex - index;
+        log.info(".........maxEntries {},index{} ,nextIndex {}", maxEntries, index, nextIndex);
         context.getNodeGroup()
                 .listReplicationTarget()
-                .forEach(groupMember -> doReplicateLogCore(groupMember, maxEntries));
+                .forEach(groupMember -> doReplicateLogCore(groupMember, nextIndex, maxEntries));
     }
 
     @Override
@@ -129,15 +125,10 @@ public class NodeImpl implements Node {
         return role.getNameAndLeaderId(context.getSelfId());
     }
 
-    private void doReplicateLogCore(GroupMember member, int maxEntries) {
-        log.info("next index{}",member.getNextIndex());
-        AppendEntriesRpc
-                appendEntriesRpc = AppendEntriesRpc.builder()
-                .term(this.getRole().getTerm())
-                .leaderId(context.getSelfId())
-                .prevLogIndex(member.getNextIndex())
-                .leaderCommit(maxEntries)
-                .build();
+    private void doReplicateLogCore(GroupMember member, int nextIndex, int maxEntries) {
+        log.info("next index{}", member.getNextIndex());
+        AppendEntriesRpc appendEntriesRpc =
+                context.getLog().createAppendEntriesRpc(role.getTerm(), context.getSelfId(), nextIndex, maxEntries);
         context.getConnector().sendAppendEntries(appendEntriesRpc, member.getEndpoint());
     }
 
