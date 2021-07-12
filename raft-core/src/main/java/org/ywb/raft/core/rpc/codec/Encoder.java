@@ -56,8 +56,6 @@ public class Encoder extends MessageToByteEncoder<Object> {
                     .build();
             ProtocolUtils.write(out, MessageConstants.MSG_TYPE_REQUEST_VOTE_RESULT, voteResultProto.toByteArray());
         } else if (msg instanceof AppendEntriesRpc) {
-            try {
-
                 Protos.AppendEntriesRpc appendEntriesRpcProto = null;
                 AppendEntriesRpc appendEntriesRpc = (AppendEntriesRpc) msg;
                 appendEntriesRpcProto = Protos.AppendEntriesRpc
@@ -71,9 +69,6 @@ public class Encoder extends MessageToByteEncoder<Object> {
                         .addAllEntries(entry2Proto(appendEntriesRpc.getEntries()))
                         .build();
                 ProtocolUtils.write(out, MessageConstants.MSG_TYPE_APPEND_ENTRIES_RPC, appendEntriesRpcProto.toByteArray());
-            }catch (Exception e){
-                log.error(Throwables.getStackTraceAsString(e));
-            }
         } else if (msg instanceof AppendEntriesResult) {
             AppendEntriesResult appendEntriesResult = (AppendEntriesResult) msg;
             Protos.AppendEntriesResult entriesResultProto = Protos.AppendEntriesResult

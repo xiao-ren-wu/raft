@@ -64,7 +64,6 @@ public class Decoder extends ByteToMessageDecoder {
                 out.add(voteResult);
                 break;
             case MSG_TYPE_APPEND_ENTRIES_RPC:
-                try {
                     Protos.AppendEntriesRpc appendEntriesRpcProto = Protos.AppendEntriesRpc.parseFrom(payload);
                     AppendEntriesRpc entriesRpc = AppendEntriesRpc.builder()
                             .lastEntryIndex(appendEntriesRpcProto.getLastEntryIndex())
@@ -75,9 +74,6 @@ public class Decoder extends ByteToMessageDecoder {
                             .prevLogIndex(appendEntriesRpcProto.getPrevLogIndex())
                             .build();
                     out.add(entriesRpc);
-                }catch (Exception e){
-                    log.error(Throwables.getStackTraceAsString(e));
-                }
                 break;
             case MSG_TYPE_APPEND_ENTRIES_RESULT:
                 Protos.AppendEntriesResult appendEntriesResult = Protos.AppendEntriesResult.parseFrom(payload);

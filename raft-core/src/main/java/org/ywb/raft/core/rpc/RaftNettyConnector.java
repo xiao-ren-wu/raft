@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ywb.raft.core.exceptions.ConnectorException;
 import org.ywb.raft.core.rpc.codec.Decoder;
 import org.ywb.raft.core.rpc.codec.Encoder;
+import org.ywb.raft.core.rpc.handler.ExceptionHandler;
 import org.ywb.raft.core.rpc.handler.FromRemoteHandler;
 import org.ywb.raft.core.rpc.msg.AppendEntriesResult;
 import org.ywb.raft.core.rpc.msg.AppendEntriesRpc;
@@ -72,7 +73,9 @@ public class RaftNettyConnector implements Connector {
                         socketChannel.pipeline()
                                 .addLast(new Decoder())
                                 .addLast(new Encoder())
-                                .addLast(new FromRemoteHandler(eventBus, inboundChannelGroup));
+                                .addLast(new FromRemoteHandler(eventBus, inboundChannelGroup))
+                                .addLast(new ExceptionHandler())
+                        ;
                     }
                 });
         try {
